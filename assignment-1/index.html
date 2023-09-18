@@ -4,11 +4,115 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>Bookstore</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet">
     <link href="style.css" rel="stylesheet" type="text/css" />
   </head>
 
   <body>
-    Hello world
+    <header>
+      <nav>
+        <div class="logo">
+          <h1 class="title">Book Store</h1>
+        </div>
+        <a href="https://github.com/giangbimin" target="_blank" class="user">
+          <picture>
+            <img class="avatar" src="https://avatars.githubusercontent.com/u/18586131?v=4"  alt='bimin199z'>
+          </picture>
+          <span class="name">bimin199z</span>
+        </a>
+      </nav>
+    </header>
+
+    <main>
+      <section>
+        <nav class="search-bar">
+          <div>
+            <input type="text" id="search-input" class="form-input" placeholder="Search by title" onkeyup="myApp.handleSearchBook()">
+          </div>
+          <button id="add-book-button" class="btn btn-primary" onclick="myApp.openAddBookModal()">Add a New Book</button>
+        </nav>
+      </section>
+
+      <section>
+        <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Topic</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="book-table">
+        </tbody>
+        </table>
+      </section>
+      <section>
+        <div id="add-book-modal" class="modal">
+          <div class="modal-header">
+            <h2>Add a New Book</h2>
+            <span class="close-modal" onclick="myApp.closeAddBookModal()">&times;</span>
+          </div>
+          <div class="modal-content">
+            <form id="add-book-form">
+              <div class="form-group">
+                <label class="form-label">Book Name:</label>
+                <input class="form-input" type="text" id="title" placeholder="Enter Title">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Book Author:</label>
+                <input class="form-input" type="text" id="author" placeholder="Enter Author">
+              </div>
+              <div class="form-group">
+                <label for="topic" class="form-label">Topic</label>
+                <select id="topic" class="form-input form-input-select">
+                  <option value="" selected disabled hidden>Select Topic</option>
+                  <option value="Programming">Programming</option>
+                  <option value="Database">Database</option>
+                  <option value="DepOps">DepOps</option>
+                  <option value="FrontEnd">FrontEnd</option>
+                  <option value="BackEnd">BackEnd</option>
+                </select>
+              </div>
+              <div class="btns modal-btns">
+                <button type="button" class="btn modal-btn" onclick="myApp.closeAddBookModal()">Cancel</button>
+                <button type="button" class="btn btn-primary modal-btn" onclick="myApp.handleAddBook()">Add</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div id="delete-book-modal" class="modal">
+          <div class="modal-header">
+            <h2>Delete Book</h2>
+            <span class="close-modal" onclick="myApp.closeDeleteBookModal()">&times;</span>
+          </div>
+          <div class="modal-content">
+            <p>Do you want delete <span id="book-name"></span> book?</p>
+            <div class="btns modal-btns">
+              <button type="button" class="btn modal-btn" onclick="myApp.closeDeleteBookModal()">Cancel</button>
+              <button type="button" class="btn btn-primary modal-btn" onclick="myApp.handleDeleteBook()">Destroy</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script id="book-template" type="text/template">
+      <td>{{title}}</td>
+      <td>{{author}}</td>
+      <td>{{topic}}</td>
+      <td>
+        <span class="delete-button" onclick="myApp.openDeleteBookModal('{{id}}')">Delete</span>
+      </td>
+    </script>
+
     <script src="script.js"></script>
+    <script>
+      myApp = new MyAppController();
+      myApp.start();
+    </script>
   </body>
 </html>
