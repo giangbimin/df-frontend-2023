@@ -14,7 +14,7 @@
     <header>
       <nav>
         <div class="logo">
-          <h1 class="title">Book Store</h1>
+          <h1 class="header-text">Book Store</h1>
         </div>
         <a href="https://github.com/giangbimin" target="_blank" class="user">
           <picture>
@@ -31,7 +31,7 @@
           <div>
             <input type="text" id="search-input" class="form-input" placeholder="Search by title" onkeyup="myApp.handleSearchBook()">
           </div>
-          <button id="add-book-button" class="btn btn-primary" onclick="myApp.openAddBookModal()">Add a New Book</button>
+          <button id="add-book-button" class="btn btn-primary" onclick="myApp.openAddBookModal()">Add Book</button>
         </nav>
       </section>
 
@@ -52,7 +52,7 @@
       <section>
         <div id="add-book-modal" class="modal">
           <div class="modal-header">
-            <h2>Add a New Book</h2>
+            <h2 class="header-text">Add a New Book</h2>
             <span class="close-modal" onclick="myApp.closeAddBookModal()">&times;</span>
           </div>
           <div class="modal-content">
@@ -86,7 +86,7 @@
 
         <div id="delete-book-modal" class="modal">
           <div class="modal-header">
-            <h2>Delete Book</h2>
+            <h2 class="header-text">Delete Book</h2>
             <span class="close-modal" onclick="myApp.closeDeleteBookModal()">&times;</span>
           </div>
           <div class="modal-content">
