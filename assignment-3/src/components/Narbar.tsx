@@ -16,8 +16,7 @@ const Navbar: FC<NavbarProps> = ({ theme, toggleTheme }) => {
         <a
           href="https://github.com/giangbimin"
           target="_blank"
-          rel="noreferrer"
-        >
+          rel="noreferrer">
           <picture>
             <img
               className="avatar"
