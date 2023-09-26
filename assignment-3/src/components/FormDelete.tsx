@@ -23,7 +23,7 @@ const FormDelete: FC<FormDeleteProps> = ({ formDelete, deleteBook, closeDeleteFo
         <p>
           Do you want to delete
           <span>{formDelete.book?.title}</span>
-          book?
+          &nbsp;book?
         </p>
         <div className="btns modal-btns">
           <button
