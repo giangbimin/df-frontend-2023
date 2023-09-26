@@ -1,24 +1,17 @@
-import logo from './logo.svg'
-import './App.css'
+import { BookType } from './Types'
+import { Book } from './components/Book'
 
 function App() {
+  const exampleBook: BookType = {
+    id: Math.floor(Math.random() * Date.now()).toString(16),
+    createdAt: Date.now(),
+    title: 'Sample Title',
+    author: 'Sample Author',
+    topic: 'Sample Topic',
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <Book book={exampleBook} />
     </div>
   )
 }

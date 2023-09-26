@@ -45,6 +45,27 @@
     "@types/node": "^16.18.52",
     "@types/react": "^18.2.22",
     "@types/react-dom": "^18.2.7",
+    "@typescript-eslint/eslint-plugin": "4.x",
+    "@typescript-eslint/parser": "4.0.1",
+    "babel-eslint": "10.x",
+    "eslint": "7.x",
+    "eslint-config-airbnb": "18.x",
+    "eslint-config-airbnb-typescript": "12.x",
+    "eslint-config-prettier": "7.x",
+    "eslint-config-react": "1.x",
+    "eslint-plugin-import": "2.x",
+    "eslint-plugin-jsx-a11y": "6.x",
+    "eslint-plugin-prettier": "3.x",
+    "eslint-plugin-react": "7.x",
+    "eslint-plugin-react-hooks": "4.x",
+    "eslint-plugin-testing-library": "3.x",
+    "lint-staged": "^14.0.1",
     "prettier": "^3.0.3"
+  },
+  "lint-staged": {
+    "*.tsx": [
+      "pnpm run lint",
+      "pnpm run format"
+    ]
   }
 }
