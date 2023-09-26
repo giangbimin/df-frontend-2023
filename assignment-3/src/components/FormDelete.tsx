@@ -1,23 +1,33 @@
-import React, { FC } from 'react';
-import { BookType, DeleteFormStateType } from '../Types';
+import React, { FC } from 'react'
+import { BookType, DeleteFormStateType } from '../Types'
 
 interface FormDeleteProps {
-  formDelete: DeleteFormStateType;
-  deleteBook: (book: BookType | null) => void;
-  closeDeleteForm: () => void;
+  formDelete: DeleteFormStateType
+  deleteBook: (book: BookType | null) => void
+  closeDeleteForm: () => void
 }
 
-const FormDelete: FC<FormDeleteProps> = ({ formDelete, deleteBook, closeDeleteForm }) => {
+const FormDelete: FC<FormDeleteProps> = ({
+  formDelete,
+  deleteBook,
+  closeDeleteForm,
+}) => {
   const handleDeleteBook = () => {
-    deleteBook(formDelete.book);
-    closeDeleteForm();
-  };
+    deleteBook(formDelete.book)
+    closeDeleteForm()
+  }
 
   return (
     <div className={`modal${formDelete.isShow ? ' is-visible' : ''}`}>
       <div className="modal-header">
         <h2 className="header-text">Delete Book</h2>
-        <button onClick={closeDeleteForm} className='close-modal transparent-btn'>  &times;</button>
+        <button
+          onClick={closeDeleteForm}
+          className="close-modal transparent-btn"
+        >
+          {' '}
+          &times;
+        </button>
       </div>
       <div className="modal-content">
         <p>
@@ -43,7 +53,7 @@ const FormDelete: FC<FormDeleteProps> = ({ formDelete, deleteBook, closeDeleteFo
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default FormDelete;
+export default FormDelete

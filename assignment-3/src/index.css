@@ -287,3 +287,7 @@ input:checked+.slider:before {
   background: transparent;
   border: none;
 }
+
+.cols-4 td, .cols-4 th {
+  width: 25%;
+}

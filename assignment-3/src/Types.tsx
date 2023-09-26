@@ -20,22 +20,30 @@ interface SearchTermType {
 }
 
 interface CreateFormStateType {
-  isShow: boolean;
-  book: BookType | null;
+  isShow: boolean
+  book: BookType | null
 }
 
 interface DeleteFormStateType {
-  isShow: boolean;
-  book: BookType | null;
+  isShow: boolean
+  book: BookType | null
 }
 
 interface CreateBookResponseType {
-  status: boolean;
-  data: BookType;
+  status: boolean
+  data: BookType
 }
 
 interface DeleteBookResponseType {
-  status: boolean;
+  status: boolean
 }
 
-export type { BooksType, BookType, SearchTermType, CreateFormStateType, DeleteFormStateType, CreateBookResponseType, DeleteBookResponseType };
+export type {
+  BooksType,
+  BookType,
+  SearchTermType,
+  CreateFormStateType,
+  DeleteFormStateType,
+  CreateBookResponseType,
+  DeleteBookResponseType,
+}

@@ -1,9 +1,9 @@
-import { FC } from 'react';
-import { BookType } from '../Types';
-import Book from './Book';
+import { FC } from 'react'
+import { BookType } from '../Types'
+import Book from './Book'
 
 interface BookListProps {
-  books: BookType[];
+  books: BookType[]
 }
 
 const BookList: FC<BookListProps> = ({ books }) => {
@@ -11,7 +11,7 @@ const BookList: FC<BookListProps> = ({ books }) => {
     <div id="books">
       <table>
         <thead>
-          <tr>
+          <tr className="cols-4">
             <th>Title</th>
             <th>Author</th>
             <th>Topic</th>
@@ -25,7 +25,7 @@ const BookList: FC<BookListProps> = ({ books }) => {
         </tbody>
       </table>
     </div>
-  );
-};
+  )
+}
 
-export default BookList;
+export default BookList

@@ -1,9 +1,9 @@
-import { useState, ChangeEvent, FC } from 'react';
-import { BookType } from '../Types';
+import { useState, ChangeEvent, FC } from 'react'
+import { BookType } from '../Types'
 
 interface FormCreateProps {
-  closeCreateForm: () => void;
-  addBook: (book: BookType) => void;
+  closeCreateForm: () => void
+  addBook: (book: BookType) => void
 }
 
 const defaultBook: BookType = {
@@ -12,46 +12,49 @@ const defaultBook: BookType = {
   title: '',
   author: '',
   topic: '',
-};
+}
 
 const FormCreate: FC<FormCreateProps> = ({ closeCreateForm, addBook }) => {
-  const [book, setBook] = useState(defaultBook);
+  const [book, setBook] = useState(defaultBook)
 
   const handleInputTitle = (e: ChangeEvent<HTMLInputElement>) => {
-    setBook((prevBook) => ({ ...prevBook, title: e.target.value }));
-  };
+    setBook((prevBook) => ({ ...prevBook, title: e.target.value }))
+  }
 
   const handleInputAuthor = (e: ChangeEvent<HTMLInputElement>) => {
-    setBook((prevBook) => ({ ...prevBook, author: e.target.value }));
-  };
+    setBook((prevBook) => ({ ...prevBook, author: e.target.value }))
+  }
 
   const handleInputTopic = (e: ChangeEvent<HTMLSelectElement>) => {
-    setBook((prevBook) => ({ ...prevBook, topic: e.target.value }));
-  };
+    setBook((prevBook) => ({ ...prevBook, topic: e.target.value }))
+  }
 
   const onCloseModal = () => {
-    setBook(defaultBook);
-    closeCreateForm();
-  };
+    setBook(defaultBook)
+    closeCreateForm()
+  }
 
   const onSubmitModal = () => {
     if (isInvalidBook()) {
-      alert('Please fill in all fields: Title, Author, and Topic.');
+      alert('Please fill in all fields: Title, Author, and Topic.')
     } else {
-      addBook(book);
-      onCloseModal();
+      addBook(book)
+      onCloseModal()
     }
-  };
+  }
 
   const isInvalidBook = () => {
-    return book.title === '' || book.author === '' || book.topic === '';
-  };
+    return book.title === '' || book.author === '' || book.topic === ''
+  }
 
   return (
     <div className="modal">
       <div className="modal-header">
         <h2 className="header-text">Add a New Book</h2>
-        <button onClick={onCloseModal} className='close-modal transparent-btn'>  &times;</button>
+        <button onClick={onCloseModal} className="close-modal transparent-btn">
+          {' '}
+          &times;
+        </button>
       </div>
       <div className="modal-content">
         <form>
@@ -119,7 +122,7 @@ const FormCreate: FC<FormCreateProps> = ({ closeCreateForm, addBook }) => {
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default FormCreate;
+export default FormCreate
