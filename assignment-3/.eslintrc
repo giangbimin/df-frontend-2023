@@ -15,14 +15,14 @@
     "ecmaFeatures": {
       "jsx": true
     },
-    "project": ["./assignment-3/tsconfig.json"],
+    "project": ["./tsconfig.json"],
     "createDefaultProgram": true,
     "sourceType": "module"
   },
   "rules": {},
   "overrides": [
     {
-      "files": ["**/*.ts?(x)", "**/*.js?(x)"],
+      "files": ["*.ts?(x)", "**/*.ts?(x)", "**/*.js?(x)"],
       "rules": {
         "react/react-in-jsx-scope": "off",
         "react/jsx-sort-props": "off",

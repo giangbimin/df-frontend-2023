@@ -6,8 +6,8 @@ interface BooksType {
 }
 
 interface BookType {
-  id?: string
-  createdAt?: number
+  id: string
+  createdAt: number
   title: string
   author: string
   topic: string
@@ -16,7 +16,26 @@ interface BookType {
 interface SearchTermType {
   page: number
   perPage: number
-  Term: String
+  term: String
 }
 
-export type { BooksType, BookType, SearchTermType }
+interface CreateFormStateType {
+  isShow: boolean;
+  book: BookType | null;
+}
+
+interface DeleteFormStateType {
+  isShow: boolean;
+  book: BookType | null;
+}
+
+interface CreateBookResponseType {
+  status: boolean;
+  data: BookType;
+}
+
+interface DeleteBookResponseType {
+  status: boolean;
+}
+
+export type { BooksType, BookType, SearchTermType, CreateFormStateType, DeleteFormStateType, CreateBookResponseType, DeleteBookResponseType };
