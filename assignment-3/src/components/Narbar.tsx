@@ -1,9 +1,9 @@
-import { FC } from 'react'
-import ThemeSwitch from './ThemeSwitch'
+import { FC } from 'react';
+import ThemeSwitch from './ThemeSwitch';
 
 interface NavbarProps {
-  theme: string
-  toggleTheme: () => void
+  theme: string;
+  toggleTheme: () => void;
 }
 
 const Navbar: FC<NavbarProps> = ({ theme, toggleTheme }) => {
@@ -32,7 +32,7 @@ const Navbar: FC<NavbarProps> = ({ theme, toggleTheme }) => {
         </div>
       </div>
     </nav>
-  )
-}
+  );
+};
 
-export default Navbar
+export default Navbar;

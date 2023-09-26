@@ -1,25 +1,25 @@
-import { FC } from 'react'
-import { BooksType } from '../Types'
+import { FC } from 'react';
+import { BooksType } from '../Types';
 
 interface PaginationProps {
-  bookStore: BooksType
-  onPageChange: (newPage: number) => void
+  bookStore: BooksType;
+  onPageChange: (newPage: number) => void;
 }
 
 const Pagination: FC<PaginationProps> = ({ bookStore, onPageChange }) => {
-  const pageNumbers: number[] = []
+  const pageNumbers: number[] = [];
 
   for (let i = 1; i <= bookStore.totalPages; i++) {
-    pageNumbers.push(i)
+    pageNumbers.push(i);
   }
 
   const onPrevPage = () => {
-    onPageChange(bookStore.searchTerm.page - 1)
-  }
+    onPageChange(bookStore.searchTerm.page - 1);
+  };
 
   const onNextPage = () => {
-    onPageChange(bookStore.searchTerm.page + 1)
-  }
+    onPageChange(bookStore.searchTerm.page + 1);
+  };
 
   return (
     <div className="pagination-bar">
@@ -37,7 +37,7 @@ const Pagination: FC<PaginationProps> = ({ bookStore, onPageChange }) => {
         <button onClick={onNextPage}>&raquo;</button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Pagination
+export default Pagination;

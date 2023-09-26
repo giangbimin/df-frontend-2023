@@ -1,19 +1,19 @@
-import { FC, useContext } from 'react'
-import { DeleteBookFormContext } from '../contexts/DeleteBookFormContext'
-import { BookType } from '../Types'
+import { FC, useContext } from 'react';
+import { DeleteBookFormContext } from '../contexts/DeleteBookFormContext';
+import { BookType } from '../Types';
 
 interface BookProps {
-  book: BookType
+  book: BookType;
 }
 const Book: FC<BookProps> = ({ book }) => {
   const showDeleteForm = useContext<((book: BookType) => void) | null>(
     DeleteBookFormContext,
-  )
+  );
   const onClickDelete = () => {
     if (showDeleteForm) {
-      showDeleteForm(book)
+      showDeleteForm(book);
     }
-  }
+  };
 
   return (
     <tr className="cols-4">
@@ -29,7 +29,7 @@ const Book: FC<BookProps> = ({ book }) => {
         </button>
       </td>
     </tr>
-  )
-}
+  );
+};
 
-export default Book
+export default Book;

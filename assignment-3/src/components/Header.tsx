@@ -1,18 +1,18 @@
-import { FC } from 'react'
+import { FC } from 'react';
 
 interface HeaderProps {
-  showCreateForm: () => void
-  onTermChange: (term: string) => void
+  showCreateForm: () => void;
+  onTermChange: (term: string) => void;
 }
 
 const Header: FC<HeaderProps> = (props) => {
   const showCreateForm = () => {
-    props.showCreateForm()
-  }
+    props.showCreateForm();
+  };
 
   const onTermChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    props.onTermChange(e.target.value)
-  }
+    props.onTermChange(e.target.value);
+  };
 
   return (
     <nav className="search-bar">
@@ -28,7 +28,7 @@ const Header: FC<HeaderProps> = (props) => {
         Add Book
       </button>
     </nav>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

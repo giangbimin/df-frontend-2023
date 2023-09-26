@@ -1,10 +1,10 @@
-import React, { FC } from 'react'
-import { BookType, DeleteFormStateType } from '../Types'
+import React, { FC } from 'react';
+import { BookType, DeleteFormStateType } from '../Types';
 
 interface FormDeleteProps {
-  formDelete: DeleteFormStateType
-  deleteBook: (book: BookType | null) => void
-  closeDeleteForm: () => void
+  formDelete: DeleteFormStateType;
+  deleteBook: (book: BookType | null) => void;
+  closeDeleteForm: () => void;
 }
 
 const FormDelete: FC<FormDeleteProps> = ({
@@ -13,9 +13,9 @@ const FormDelete: FC<FormDeleteProps> = ({
   closeDeleteForm,
 }) => {
   const handleDeleteBook = () => {
-    deleteBook(formDelete.book)
-    closeDeleteForm()
-  }
+    deleteBook(formDelete.book);
+    closeDeleteForm();
+  };
 
   return (
     <div className={`modal${formDelete.isShow ? ' is-visible' : ''}`}>
@@ -53,7 +53,7 @@ const FormDelete: FC<FormDeleteProps> = ({
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default FormDelete
+export default FormDelete;
