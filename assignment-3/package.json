@@ -16,7 +16,8 @@
     "eject": "react-scripts eject",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
-    "preinstall": "npx only-allow pnpm"
+    "preinstall": "npx only-allow pnpm",
+    "postinstall": "cd .. && husky install assignment-3/.husky"
   },
   "eslintConfig": {
     "extends": [
@@ -59,13 +60,15 @@
     "eslint-plugin-react": "7.x",
     "eslint-plugin-react-hooks": "4.x",
     "eslint-plugin-testing-library": "3.x",
+    "husky": "^8.0.3",
     "lint-staged": "^14.0.1",
     "prettier": "^3.0.3"
   },
   "lint-staged": {
     "*.tsx": [
       "pnpm run lint",
-      "pnpm run format"
+      "pnpm run format",
+      "git add ."
     ]
   }
 }
