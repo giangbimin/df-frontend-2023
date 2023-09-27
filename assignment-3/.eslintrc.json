@@ -19,7 +19,7 @@
     "createDefaultProgram": true,
     "sourceType": "module"
   },
-  "rules": {},
+  "rules": { },
   "overrides": [
     {
       "files": ["*.ts?(x)", "**/*.ts?(x)", "**/*.js?(x)"],

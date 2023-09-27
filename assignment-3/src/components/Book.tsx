@@ -23,7 +23,8 @@ const Book: FC<BookProps> = ({ book }) => {
       <td>
         <button
           className="delete-button transparent-btn"
-          onClick={onClickDelete}>
+          onClick={onClickDelete}
+        >
           Delete
         </button>
       </td>

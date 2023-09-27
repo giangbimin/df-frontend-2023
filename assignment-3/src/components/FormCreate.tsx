@@ -91,7 +91,8 @@ const FormCreate: FC<FormCreateProps> = ({ closeCreateForm, addBook }) => {
               name="topic"
               id="topic"
               value={book.topic}
-              onChange={handleInputTopic}>
+              onChange={handleInputTopic}
+            >
               <option value="" disabled hidden>
                 Select Topic
               </option>
@@ -106,13 +107,15 @@ const FormCreate: FC<FormCreateProps> = ({ closeCreateForm, addBook }) => {
             <button
               type="button"
               className="btn modal-btn"
-              onClick={onCloseModal}>
+              onClick={onCloseModal}
+            >
               Cancel
             </button>
             <button
               type="button"
               className="btn btn-primary modal-btn"
-              onClick={onSubmitModal}>
+              onClick={onSubmitModal}
+            >
               Add
             </button>
           </div>

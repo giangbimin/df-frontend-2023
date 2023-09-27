@@ -23,7 +23,8 @@ const FormDelete: FC<FormDeleteProps> = ({
         <h2 className="header-text">Delete Book</h2>
         <button
           onClick={closeDeleteForm}
-          className="close-modal transparent-btn">
+          className="close-modal transparent-btn"
+        >
           {' '}
           &times;
         </button>
@@ -38,13 +39,15 @@ const FormDelete: FC<FormDeleteProps> = ({
           <button
             type="button"
             className="btn modal-btn"
-            onClick={closeDeleteForm}>
+            onClick={closeDeleteForm}
+          >
             Cancel
           </button>
           <button
             type="button"
             className="btn btn-primary modal-btn"
-            onClick={handleDeleteBook}>
+            onClick={handleDeleteBook}
+          >
             Destroy
           </button>
         </div>

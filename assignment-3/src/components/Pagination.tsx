@@ -29,7 +29,8 @@ const Pagination: FC<PaginationProps> = ({ bookStore, onPageChange }) => {
           <button
             className={bookStore.searchTerm.page === page ? 'active' : ''}
             key={page}
-            onClick={() => onPageChange(page)}>
+            onClick={() => onPageChange(page)}
+          >
             {page}
           </button>
         ))}

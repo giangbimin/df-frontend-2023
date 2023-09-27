@@ -67,7 +67,6 @@
   "lint-staged": {
     "*.tsx": [
       "pnpm run lint",
-      "pnpm run format",
       "git add ."
     ]
   }
