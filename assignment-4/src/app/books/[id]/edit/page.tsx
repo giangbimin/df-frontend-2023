@@ -29,16 +29,11 @@ export default function ShowBookPage({ params: { id } }) {
     if (!book) return;
     try {
       const response = await BookManagerService.update(book);
-      if (response.status) {
-        router.replace('/');
-      } else {
-        console.log(response.message);
-      }
+      if (response.status) router.replace('/');
     } catch (error) {
       console.error('Error creating book:', error);
     }
   };
-
 
   useEffect(() => {
     fetchBook(id);

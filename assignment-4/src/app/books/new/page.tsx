@@ -27,8 +27,6 @@ export default function NewBookPage() {
       const response = await BookManagerService.create(book);
       if (response.status) {
         router.replace('/');
-      } else {
-        console.log(response.message);
       }
     } catch (error) {
       console.error('Error creating book:', error);

@@ -7,7 +7,9 @@ export default function CustomNotFound() {
       <div className="w-full xl:w-1/2 relative pb-12 lg:pb-0">
         <div className="relative">
           <div>
-            <h1 className="font-bold text-[64px] text-gray-800 dark:text-white">404</h1>
+            <h1 className="font-bold text-[64px] text-gray-800 dark:text-white">
+              404
+            </h1>
           </div>
           <div className="">
             <div className="">

@@ -48,7 +48,10 @@ export const BookTableFooter: FC<BookProps> = ({
       <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
         Showing&nbsp;
         <span className="font-semibold text-gray-900 dark:text-white">
-          {Math.min((page - 1) * perPage + 1, total)} - {Math.min(page * perPage, total)}
+          {`${Math.min((page - 1) * perPage + 1, total)} - ${Math.min(
+            page * perPage,
+            total,
+          )}`}
         </span>
         &nbsp;of&nbsp;
         <span className="font-semibold text-gray-900 dark:text-white">
