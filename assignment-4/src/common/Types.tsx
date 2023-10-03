@@ -1,7 +1,8 @@
-interface BooksType {
-  searchTerm: SearchTermType;
-  total: number;
-  totalPages: number;
+interface BookStoreType {
+  page: number | 1;
+  perPage: number | 5;
+  total: number | 0;
+  totalPages: number | 0;
   data: BookType[];
 }
 
@@ -29,8 +30,9 @@ interface DeleteFormStateType {
   book: BookType | null;
 }
 
-interface CreateBookResponseType {
+interface BookResponseType {
   status: boolean;
+  message: string;
   data: BookType;
 }
 
@@ -38,12 +40,23 @@ interface DeleteBookResponseType {
   status: boolean;
 }
 
+interface ParamsType {
+  [key: string]: string | string[] | undefined;
+}
+
+interface LinkType {
+  text: string;
+  href: string;
+}
+
 export type {
-  BooksType,
+  BookStoreType,
   BookType,
   SearchTermType,
   CreateFormStateType,
   DeleteFormStateType,
-  CreateBookResponseType,
+  BookResponseType,
   DeleteBookResponseType,
+  ParamsType,
+  LinkType,
 };
