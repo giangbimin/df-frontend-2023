@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="antialiased bg-gray-50 dark:bg-gray-900 ">
+        <div className="antialiased bg-gray-50 dark:bg-gray-900 h-full">
           <Navbar />
           <main className="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5">
             <div
