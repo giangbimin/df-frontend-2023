@@ -14,7 +14,8 @@
     "start": "next start",
     "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
-    "preinstall": "npx only-allow pnpm"
+    "preinstall": "npx only-allow pnpm",
+    "postinstall": "cd .. && husky install assignment-4/.husky"
   },
   "dependencies": {
     "husky": "^8.0.3",
