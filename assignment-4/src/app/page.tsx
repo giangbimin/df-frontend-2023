@@ -44,7 +44,7 @@ export default function HomePage() {
   return (
     <Suspense fallback={<Loading text="Books" />}>
       {toaster && <Toaster toaster={toaster} clearToast={clearToast} />}
-      <BookList bookStore={deferredQuery} />;
+      <BookList bookStore={deferredQuery} />
     </Suspense>
   );
 }
