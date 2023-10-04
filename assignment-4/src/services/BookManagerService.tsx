@@ -3,6 +3,7 @@ import {
   BookStoreType,
   BookResponseType,
   SearchTermType,
+  BookResponseStatusType,
 } from '../common/Types';
 
 class BookManagerService {
@@ -74,34 +75,51 @@ class BookManagerService {
       this.saveBooksToStorage(storedBooks);
       return {
         status: true,
-        message: 'Created!',
+        message: `Success create book ${newBook.id}`,
         data: newBook,
       };
     } catch (error) {
-      console.error('Error creating book:', error);
-      throw error;
+      return {
+        status: false,
+        message: error,
+        data: book,
+      };
     }
   }
 
-  public async delete(book: BookType): Promise<boolean> {
+  public async delete(book: BookType): Promise<BookResponseStatusType> {
     try {
       const storedBooks = this.getBooksFromStorage();
       const updatedBooks = storedBooks.filter((item) => item.id !== book.id);
       this.saveBooksToStorage(updatedBooks);
-      return true;
+      return { status: true, message: `Success Delete book ${book.id}` };
     } catch (error) {
-      console.error('Error deleting book:', error);
-      return false;
+      return { status: false, message: error };
     }
   }
 
-  public async find(id: string): Promise<BookType | undefined> {
+  public async find(id: string): Promise<BookResponseType> {
     try {
       const storedBooks = this.getBooksFromStorage();
-      return storedBooks.find((item) => item.id === id);
+      const book = storedBooks.find((item) => item.id === id);
+      if (book) {
+        return {
+          status: false,
+          message: 'Book not found',
+          data: book,
+        };
+      }
+      return {
+        status: true,
+        message: 'Success',
+        data: undefined,
+      };
     } catch (error) {
-      console.error('Error finding book:', error);
-      throw error;
+      return {
+        status: false,
+        message: 'error',
+        data: undefined,
+      };
     }
   }
 
@@ -135,12 +153,15 @@ class BookManagerService {
       this.saveBooksToStorage(updatedBooks);
       return {
         status: true,
-        message: 'Updated!',
+        message: `Success Updated book ${book.id}`,
         data: book,
       };
     } catch (error) {
-      console.error('Error updating book:', error);
-      throw error;
+      return {
+        status: false,
+        message: error,
+        data: book,
+      };
     }
   }
 }

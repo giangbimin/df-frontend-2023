@@ -9,12 +9,16 @@ import CustomNotFound from '../../not-found';
 import { BookType } from '../../../common/Types';
 import Loading from '../../loading';
 import { Dialog } from '../../components/common/Dialog';
+import NotificationManagerService from '../../../services/NotificationManagerService';
+import { Toaster } from '../../components/common/Toaster';
+import { UseToastNotification } from '../../hooks/UseToastNotification';
 
 export default function ShowBookPage({ params: { id } }) {
   const router = useRouter();
   const [book, setBook] = useState<BookType | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(true);
   const [isDialogVisible, setIsDialogVisible] = useState(false);
+  const { toaster, showToast, clearToast } = UseToastNotification();
 
   const showDeleteDialog = () => {
     setIsDialogVisible(true);
@@ -31,10 +35,13 @@ export default function ShowBookPage({ params: { id } }) {
   const fetchBook = async (bookId: string) => {
     try {
       const fetchedBook = await BookManagerService.find(bookId);
-      setBook(fetchedBook);
+      setBook(fetchedBook.data);
       setLoading(false);
     } catch (error) {
-      console.error('Error fetching book:', error);
+      NotificationManagerService.create({
+        category: 'error',
+        message: error,
+      });
     }
   };
 
@@ -42,25 +49,35 @@ export default function ShowBookPage({ params: { id } }) {
     if (!book) return;
     try {
       const response = await BookManagerService.delete(book);
-      if (response) {
+      if (response.status) {
+        NotificationManagerService.create({
+          category: 'success',
+          message: response.message,
+        });
         router.replace('/');
       } else {
-        showDeleteDialog();
+        NotificationManagerService.create({
+          category: 'success',
+          message: response.message,
+        });
+        showToast();
       }
     } catch (error) {
-      console.error('Error fetching book:', error);
+      NotificationManagerService.create({
+        category: 'error',
+        message: error,
+      });
     }
   };
 
   useEffect(() => {
     fetchBook(id);
   }, [id]);
-
-  if (loading) return <Loading />;
+  if (loading) return <Loading text="" />;
   if (book === undefined) return <CustomNotFound />;
-
   return (
     <>
+      {toaster && <Toaster toaster={toaster} clearToast={clearToast} />}
       <section className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
         <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
           <div className="w-full md:w-1/2">

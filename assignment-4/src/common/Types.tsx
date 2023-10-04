@@ -33,11 +33,12 @@ interface DeleteFormStateType {
 interface BookResponseType {
   status: boolean;
   message: string;
-  data: BookType;
+  data: BookType | undefined;
 }
 
-interface DeleteBookResponseType {
+interface BookResponseStatusType {
   status: boolean;
+  message: string;
 }
 
 interface ParamsType {
@@ -49,6 +50,11 @@ interface LinkType {
   href: string;
 }
 
+interface ToasterType {
+  category: string;
+  message: string;
+}
+
 export type {
   BookStoreType,
   BookType,
@@ -56,7 +62,8 @@ export type {
   CreateFormStateType,
   DeleteFormStateType,
   BookResponseType,
-  DeleteBookResponseType,
+  BookResponseStatusType,
   ParamsType,
   LinkType,
+  ToasterType,
 };

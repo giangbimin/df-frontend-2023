@@ -7,7 +7,7 @@ import ThemeSwitch from './ThemeSwitch';
 const Navbar = () => {
   return (
     <header className="antialiased">
-      <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
+      <nav className="bg-white border-gray-200 px-4 lg:px-12 py-2.5 dark:bg-gray-800">
         <div className="flex flex-wrap justify-between items-center">
           <div className="flex justify-start items-center">
             <Link href="/" className="flex mr-4">
@@ -26,7 +26,7 @@ const Navbar = () => {
             />
             <div className="flex flex-col items-end">
               <p className="self-center text-sm whitespace-nowrap dark:text-white">
-                GiangBimin
+                Giang
               </p>
               <ThemeSwitch />
             </div>
