@@ -17,17 +17,14 @@ export const BookSchema = z.object({
     .string()
     .min(1, 'Author is required')
     .max(20, 'Author must have less than 20 letters'),
-  topic: z
-    .enum([...validTopics])
-    .optional()
-    .refine(
-      (value) => {
-        return validTopics.includes(value as (typeof validTopics)[number]);
-      },
-      {
-        message: 'topic is required and in the List',
-      },
-    ),
+  topic: z.enum([...validTopics]).refine(
+    (value) => {
+      return validTopics.includes(value as (typeof validTopics)[number]);
+    },
+    {
+      message: 'topic is required and in the List',
+    },
+  ),
 });
 
 export type BookSchemaType = z.infer<typeof BookSchema>;
