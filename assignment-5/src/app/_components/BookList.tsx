@@ -29,13 +29,15 @@ export const BookList = () => {
   const { loading } = bookManager;
   const bookStore = bookManager.bookResponse;
 
-  const openPopup = (book: BookType) => {
-    session.requireAuth();
+  const openPopup = async (book: BookType) => {
+    const requireLogin = await session.requireAuth();
+    if (requireLogin) return;
     deletePopup.open(book);
   };
 
   const deleteBook = async () => {
-    session.requireAuth();
+    const requireLogin = await session.requireAuth();
+    if (requireLogin) return;
     const status = await bookManager.delete(deletePopup.book, false);
     if (status) {
       await bookManager.search();
@@ -43,8 +45,9 @@ export const BookList = () => {
     }
   };
 
-  const openNewBookForm = () => {
-    session.requireAuth();
+  const openNewBookForm = async () => {
+    const requireLogin = await session.requireAuth();
+    if (requireLogin) return;
     setShowNewForm(true);
   };
 
@@ -53,7 +56,8 @@ export const BookList = () => {
   };
 
   const createBook = async (book: BookType) => {
-    session.requireAuth();
+    const requireLogin = await session.requireAuth();
+    if (requireLogin) return;
     const status = await bookManager.create(book, false);
     if (status) {
       await bookManager.search();

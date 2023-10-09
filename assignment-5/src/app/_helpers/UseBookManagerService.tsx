@@ -101,8 +101,8 @@ export function useBookManagerService(): BookStore {
     loading,
     search,
     create: async (book: BookType, isRedirect: boolean | false) => {
-      const isAuthenticate = session.requireAuth();
-      if (!isAuthenticate) return false;
+      const requireAuth = await session.requireAuth();
+      if (requireAuth) return false;
       toasterService.clear();
       booksStorage.setState({ currentBook: undefined, loading: true });
       try {
@@ -141,8 +141,8 @@ export function useBookManagerService(): BookStore {
       booksStorage.setState({ loading: false });
     },
     update: async (book: BookType) => {
-      const isAuthenticate = session.requireAuth();
-      if (!isAuthenticate) return false;
+      const requireAuth = await session.requireAuth();
+      if (requireAuth) return false;
       toasterService.clear();
       booksStorage.setState({ loading: true });
       booksStorage.setState({ currentBook: undefined });
@@ -164,8 +164,8 @@ export function useBookManagerService(): BookStore {
       }
     },
     delete: async (book: BookType | undefined, isRedirect: boolean | false) => {
-      const isAuthenticate = session.requireAuth();
-      if (!isAuthenticate) return false;
+      const requireAuth = await session.requireAuth();
+      if (requireAuth) return false;
       toasterService.clear();
       if (book === undefined) {
         toasterService.error('Not Found');

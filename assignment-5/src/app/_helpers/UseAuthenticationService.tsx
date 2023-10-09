@@ -38,11 +38,11 @@ export function useAuthenticationService(): AuthenticationService {
     requireAuth: async () => {
       await getCurrent();
       if (!currentUser) {
-        router.back();
+        router.push('/login');
         toasterService.error('Please Login', true);
-        return false;
+        return true;
       }
-      return true;
+      return false;
     },
     register: async (user) => {
       try {

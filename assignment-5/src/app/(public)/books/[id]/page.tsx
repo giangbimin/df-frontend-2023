@@ -20,13 +20,15 @@ export default function ShowBookPage({ params: { id } }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const openPopup = (book: BookType) => {
-    session.requireAuth();
+  const openPopup = async (book: BookType) => {
+    const requireLogin = await session.requireAuth();
+    if (requireLogin) return;
     popup.open(book);
   };
 
   const deleteBook = async () => {
-    session.requireAuth();
+    const requireLogin = await session.requireAuth();
+    if (requireLogin) return;
     const status = await bookManager.delete(popup.book, false);
     if (status) {
       await bookManager.search();
