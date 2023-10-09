@@ -3,7 +3,7 @@
 import { create } from 'zustand';
 import { useRouter } from 'next/navigation';
 import { RegisterUserType, UserType } from '../../_types';
-import { useToasterService } from './useToasterService';
+import { useToasterService } from './UseToasterService';
 import UserManagerService from '../../_services/UserManagerService';
 
 interface SessionStore {
@@ -36,6 +36,7 @@ export function useAuthenticationService(): AuthenticationService {
   return {
     currentUser,
     requireAuth: async () => {
+      if (currentUser) return true;
       await getCurrent();
       if (!currentUser) {
         router.back();

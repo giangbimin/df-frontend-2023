@@ -5,13 +5,13 @@ import CustomNotFound from '../../../not-found';
 import { Dialog } from '../../../_components/common/Dialog';
 import { BtnBack } from '../../../_components/common/BtnBack';
 import { useBookManagerService } from '../../../_helpers/client/UseBookManagerService';
-import { useBookPopup } from '../../../_helpers/client/UseConfirmDeleteBook';
+import { useDeleteBookPopup } from '../../../_helpers/client/UseDeleteBookPopup';
 import { BookType } from '../../../_types';
 import Loading from '../../../loading';
 
 export default function ShowBookPage({ params: { id } }) {
   const bookManager = useBookManagerService();
-  const popup = useBookPopup();
+  const popup = useDeleteBookPopup();
 
   useEffect(() => {
     bookManager.find(id);

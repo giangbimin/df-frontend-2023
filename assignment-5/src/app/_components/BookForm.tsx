@@ -113,12 +113,14 @@ export const BookForm: React.FC<BookProps> = ({
         />
       </div>
       {!disableEdit && (
-        <button
-          type="submit"
-          className="w-full text-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-        >
-          Save
-        </button>
+        <div className="w-full text-right">
+          <button
+            type="submit"
+            className="text-center text-white inline-flex items-center bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+          >
+            Save
+          </button>
+        </div>
       )}
     </form>
   );

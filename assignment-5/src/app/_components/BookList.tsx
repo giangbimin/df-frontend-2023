@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import BookLine from './BookLine';
 import { BookTableHeader } from './BookTableHeader';
@@ -6,15 +6,20 @@ import { BookTableFooter } from './BookTableFooter';
 import { BookType } from '../_types';
 import { Dialog } from './common/Dialog';
 import { useBookManagerService } from '../_helpers/client/UseBookManagerService';
-import { useBookPopup } from '../_helpers/client/UseConfirmDeleteBook';
+import { useDeleteBookPopup } from '../_helpers/client/UseDeleteBookPopup';
 import Loading from '../loading';
+import { NewBookPopup } from './NewBookPopup';
+import { useAuthenticationService } from '../_helpers/client/UseAuthenticationService';
 
 export const BookList = () => {
   const searchParams = useSearchParams();
   const bookManager = useBookManagerService();
   const parsedPage = parseInt(searchParams?.get('page') ?? '1', 10) || 1;
   const parsedTerm = searchParams?.get('term') || '';
-  const popup = useBookPopup();
+  const deletePopup = useDeleteBookPopup();
+  const session = useAuthenticationService();
+
+  const [isShowNewForm, setShowNewForm] = useState(false);
 
   useEffect(() => {
     bookManager.search();
@@ -25,34 +30,54 @@ export const BookList = () => {
   const bookStore = bookManager.bookResponse;
 
   const openPopup = (book: BookType) => {
-    popup.open(book);
+    deletePopup.open(book);
   };
 
   const deleteBook = async () => {
-    const status = await bookManager.delete(popup.book, false);
+    const status = await bookManager.delete(deletePopup.book, false);
     if (status) {
       await bookManager.search();
-      popup.close();
+      deletePopup.close();
+    }
+  };
+
+  const openNewBookForm = () => {
+    session.requireAuth();
+    setShowNewForm(true);
+  };
+
+  const closeNewBookForm = () => {
+    setShowNewForm(false);
+  };
+
+  const createBook = async (book: BookType) => {
+    session.requireAuth();
+    const status = await bookManager.create(book, false);
+    if (status) {
+      await bookManager.search();
+      closeNewBookForm();
     }
   };
 
   if (loading) return <Loading text="Books" />;
   return (
     <>
-      {popup.isShow && popup.book && (
+      {deletePopup.isShow && deletePopup.book && (
         <Dialog
-          message={`Are you sure you want to delete ${popup.book.title} book?`}
+          message={`Are you sure you want to delete ${deletePopup.book.title} book?`}
           onSubmit={() => {
             deleteBook();
           }}
           onClose={() => {
-            popup.close();
+            deletePopup.close();
           }}
         />
       )}
-
+      {isShowNewForm && (
+        <NewBookPopup onSubmit={createBook} onClose={closeNewBookForm} />
+      )}
       <div id="books">
-        <BookTableHeader />
+        <BookTableHeader openNewBookForm={openNewBookForm} />
         <div className="min-h-[345px] overflow-x-auto">
           {loading ? (
             <Loading text="Books" />

@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { BookType } from '../../_types';
 
-interface PopupState {
+interface DeleteBookPopupState {
   book: BookType | undefined;
   isShow: boolean;
 }
@@ -11,14 +11,14 @@ const initialState = {
   isShow: false,
 };
 
-const popupState = create<PopupState>(() => initialState);
+const popupState = create<DeleteBookPopupState>(() => initialState);
 
-interface BookPopupState extends PopupState {
+interface UseDeleteBookPopup extends DeleteBookPopupState {
   open: (book: BookType) => void;
   close: () => void;
 }
 
-export function useBookPopup(): BookPopupState {
+export function useDeleteBookPopup(): UseDeleteBookPopup {
   const { book, isShow } = popupState();
 
   return {

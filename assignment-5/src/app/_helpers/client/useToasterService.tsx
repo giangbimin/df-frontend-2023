@@ -2,7 +2,7 @@
 
 import { create } from 'zustand';
 
-interface ToasterStore {
+interface ToasterState {
   toaster:
     | {
         type: string;
@@ -15,7 +15,7 @@ interface ToasterStore {
   clear: () => void;
 }
 
-const useToasterStore = create<ToasterStore>((set) => ({
+const useToaster = create<ToasterState>((set) => ({
   toaster: undefined,
   success: (message, showAfterRedirect = false) => {
     const type = 'success';
@@ -33,7 +33,7 @@ const useToasterStore = create<ToasterStore>((set) => ({
 }));
 
 export function useToasterService() {
-  const { toaster, success, error, clear } = useToasterStore();
+  const { toaster, success, error, clear } = useToaster();
   return {
     toaster,
     success,
