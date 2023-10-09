@@ -25,7 +25,7 @@ export default function ShowBookPage({ params: { id } }) {
   const deleteBook = async () => {
     const status = await bookManager.delete(popup.book, false);
     if (status) {
-      await bookManager.search(bookManager.searchCondition);
+      await bookManager.search();
       popup.close();
     }
   };
