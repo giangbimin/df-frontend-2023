@@ -30,10 +30,12 @@ export const BookList = () => {
   const bookStore = bookManager.bookResponse;
 
   const openPopup = (book: BookType) => {
+    session.requireAuth();
     deletePopup.open(book);
   };
 
   const deleteBook = async () => {
+    session.requireAuth();
     const status = await bookManager.delete(deletePopup.book, false);
     if (status) {
       await bookManager.search();

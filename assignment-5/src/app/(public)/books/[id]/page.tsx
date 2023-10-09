@@ -8,8 +8,10 @@ import { useBookManagerService } from '../../../_helpers/UseBookManagerService';
 import { useDeleteBookPopup } from '../../../_helpers/UseDeleteBookPopup';
 import { BookType } from '../../../_types';
 import Loading from '../../../loading';
+import { useAuthenticationService } from '../../../_helpers/UseAuthenticationService';
 
 export default function ShowBookPage({ params: { id } }) {
+  const session = useAuthenticationService();
   const bookManager = useBookManagerService();
   const popup = useDeleteBookPopup();
 
@@ -19,10 +21,12 @@ export default function ShowBookPage({ params: { id } }) {
   }, []);
 
   const openPopup = (book: BookType) => {
+    session.requireAuth();
     popup.open(book);
   };
 
   const deleteBook = async () => {
+    session.requireAuth();
     const status = await bookManager.delete(popup.book, false);
     if (status) {
       await bookManager.search();

@@ -36,7 +36,6 @@ export function useAuthenticationService(): AuthenticationService {
   return {
     currentUser,
     requireAuth: async () => {
-      if (currentUser) return true;
       await getCurrent();
       if (!currentUser) {
         router.back();
