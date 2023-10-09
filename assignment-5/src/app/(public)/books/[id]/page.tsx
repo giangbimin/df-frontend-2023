@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import CustomNotFound from '../../../not-found';
 import { Dialog } from '../../../_components/common/Dialog';
 import { BtnBack } from '../../../_components/common/BtnBack';
@@ -14,6 +15,7 @@ export default function ShowBookPage({ params: { id } }) {
   const session = useAuthenticationService();
   const bookManager = useBookManagerService();
   const popup = useDeleteBookPopup();
+  const router = useRouter();
 
   useEffect(() => {
     bookManager.find(id);
@@ -29,10 +31,10 @@ export default function ShowBookPage({ params: { id } }) {
   const deleteBook = async () => {
     const requireLogin = await session.requireAuth();
     if (requireLogin) return;
-    const status = await bookManager.delete(popup.book, false);
+    const status = await bookManager.delete(popup.book, true);
     if (status) {
-      await bookManager.search();
       popup.close();
+      router.replace('/');
     }
   };
 

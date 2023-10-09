@@ -38,7 +38,7 @@ export function useAuthenticationService(): AuthenticationService {
     requireAuth: async () => {
       await getCurrent();
       if (!currentUser) {
-        router.push('/login');
+        router.replace('/login');
         toasterService.error('Please Login', true);
         return true;
       }
@@ -49,7 +49,7 @@ export function useAuthenticationService(): AuthenticationService {
         const response = await UserManagerService.register(user);
         if (response.status) {
           toasterService.success(response.message, true);
-          router.push('/login');
+          router.replace('/login');
         } else {
           toasterService.error(response.message);
         }
@@ -64,7 +64,7 @@ export function useAuthenticationService(): AuthenticationService {
         if (response.status) {
           const currentUser = response.data;
           sessionStorage.setState({ ...initialState, currentUser });
-          router.push('/');
+          router.replace('/');
           toasterService.success(response.message, true);
         } else {
           toasterService.error(response.message);
@@ -79,7 +79,7 @@ export function useAuthenticationService(): AuthenticationService {
         const response = await UserManagerService.logout();
         if (response.status) {
           sessionStorage.setState({ currentUser: undefined });
-          router.push('/login');
+          router.replace('/');
           toasterService.success(response.message, true);
         } else {
           toasterService.error(response.message);

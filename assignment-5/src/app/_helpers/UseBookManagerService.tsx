@@ -151,7 +151,6 @@ export function useBookManagerService(): BookStore {
         if (response.status) {
           booksStorage.setState({ currentBook: response.data });
           toasterService.success(response.message, true);
-          router.push('/');
         } else {
           toasterService.error(response.message);
         }
@@ -176,12 +175,12 @@ export function useBookManagerService(): BookStore {
         const response = await BookManagerService.delete(book);
         if (response.status) {
           booksStorage.setState({ currentBook: undefined });
-          toasterService.success(response.message, true);
           if (isRedirect) {
-            router.push('/');
+            router.replace('/');
           } else {
             search();
           }
+          toasterService.success(response.message, true);
         } else {
           toasterService.error(response.message);
         }
