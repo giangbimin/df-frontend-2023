@@ -4,8 +4,8 @@ import { useEffect } from 'react';
 import CustomNotFound from '../../../not-found';
 import { Dialog } from '../../../_components/common/Dialog';
 import { BtnBack } from '../../../_components/common/BtnBack';
-import { useBookManagerService } from '../../../_helpers/client/UseBookManagerService';
-import { useDeleteBookPopup } from '../../../_helpers/client/UseDeleteBookPopup';
+import { useBookManagerService } from '../../../_helpers/UseBookManagerService';
+import { useDeleteBookPopup } from '../../../_helpers/UseDeleteBookPopup';
 import { BookType } from '../../../_types';
 import Loading from '../../../loading';
 

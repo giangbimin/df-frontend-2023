@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect } from 'react';
-import { useAuthenticationService } from '../_helpers/client/UseAuthenticationService';
+import { useAuthenticationService } from '../_helpers/UseAuthenticationService';
 
 export const CurrentUser = () => {
   const session = useAuthenticationService();

@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuthenticationService } from '../../_helpers/client/UseAuthenticationService';
+import { useAuthenticationService } from '../../_helpers/UseAuthenticationService';
 import { ErrorMessage } from '../../_components/common/ErrorMessage';
 import { LoginSchemaType, LoginSchema } from '../../_types';
 

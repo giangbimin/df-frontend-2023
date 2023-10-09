@@ -3,14 +3,14 @@
 import { create } from 'zustand';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useToasterService } from './UseToasterService';
-import BookManagerService from '../../_services/BookManagerService';
+import BookManagerService from '../_services/BookManagerService';
 import {
   BookType,
   BooksResponseType,
   SearchConditionType,
   defaultBookStore,
   defaultSearchCondition,
-} from '../../_types';
+} from '../_types';
 import { useAuthenticationService } from './UseAuthenticationService';
 
 interface BookStoreStorage {

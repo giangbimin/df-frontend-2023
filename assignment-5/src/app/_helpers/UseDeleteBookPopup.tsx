@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { BookType } from '../../_types';
+import { BookType } from '../_types';
 
 interface DeleteBookPopupState {
   book: BookType | undefined;

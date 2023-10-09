@@ -5,11 +5,11 @@ import { BookTableHeader } from './BookTableHeader';
 import { BookTableFooter } from './BookTableFooter';
 import { BookType } from '../_types';
 import { Dialog } from './common/Dialog';
-import { useBookManagerService } from '../_helpers/client/UseBookManagerService';
-import { useDeleteBookPopup } from '../_helpers/client/UseDeleteBookPopup';
+import { useBookManagerService } from '../_helpers/UseBookManagerService';
+import { useDeleteBookPopup } from '../_helpers/UseDeleteBookPopup';
 import Loading from '../loading';
 import { NewBookPopup } from './NewBookPopup';
-import { useAuthenticationService } from '../_helpers/client/UseAuthenticationService';
+import { useAuthenticationService } from '../_helpers/UseAuthenticationService';
 
 export const BookList = () => {
   const searchParams = useSearchParams();

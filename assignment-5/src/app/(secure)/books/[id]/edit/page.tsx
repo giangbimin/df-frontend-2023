@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { BookForm } from '../../../../_components/BookForm';
 import CustomNotFound from '../../../../not-found';
 import { BookType } from '../../../../_types';
-import { useBookManagerService } from '../../../../_helpers/client/UseBookManagerService';
-import { useAuthenticationService } from '../../../../_helpers/client/UseAuthenticationService';
+import { useBookManagerService } from '../../../../_helpers/UseBookManagerService';
+import { useAuthenticationService } from '../../../../_helpers/UseAuthenticationService';
 import { BtnBack } from '../../../../_components/common/BtnBack';
 import Loading from '../../../../loading';
 

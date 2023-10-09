@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useToasterService } from '../../_helpers/client/UseToasterService';
+import { useToasterService } from '../../_helpers/UseToasterService';
 
 export const Toaster = () => {
   const toasterService = useToasterService();

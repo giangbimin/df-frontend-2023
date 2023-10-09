@@ -6,8 +6,8 @@ import { useEffect } from 'react';
 import { BookForm } from '../../../_components/BookForm';
 import BookManagerService from '../../../_services/BookManagerService';
 import { BookType } from '../../../_types';
-import { useToasterService } from '../../../_helpers/client/UseToasterService';
-import { useAuthenticationService } from '../../../_helpers/client/UseAuthenticationService';
+import { useToasterService } from '../../../_helpers/UseToasterService';
+import { useAuthenticationService } from '../../../_helpers/UseAuthenticationService';
 
 export default function NewBookPage() {
   const session = useAuthenticationService();

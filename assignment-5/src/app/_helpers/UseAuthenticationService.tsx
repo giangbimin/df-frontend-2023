@@ -2,9 +2,9 @@
 
 import { create } from 'zustand';
 import { useRouter } from 'next/navigation';
-import { RegisterUserType, UserType } from '../../_types';
+import { RegisterUserType, UserType } from '../_types';
 import { useToasterService } from './UseToasterService';
-import UserManagerService from '../../_services/UserManagerService';
+import UserManagerService from '../_services/UserManagerService';
 
 interface SessionStore {
   currentUser: UserType | undefined;
