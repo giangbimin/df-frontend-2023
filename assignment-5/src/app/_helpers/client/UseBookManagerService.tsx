@@ -11,10 +11,11 @@ import {
   defaultBookStore,
   defaultSearchCondition,
 } from '../../_types';
-import { useAuthenticationService } from './useAuthenticationService';
+import { useAuthenticationService } from './UseAuthenticationService';
 
 interface BookStoreStorage {
   currentBook: BookType | undefined;
+  loading: boolean | false;
   bookResponse: BooksResponseType;
   searchCondition: SearchConditionType;
 }
@@ -23,69 +24,77 @@ const initialState = {
   currentBook: undefined,
   bookResponse: defaultBookStore,
   searchCondition: defaultSearchCondition,
+  loading: true,
 };
 
 const booksStorage = create<BookStoreStorage>(() => initialState);
 
 interface BookStore extends BookStoreStorage {
-  reload: () => Promise<void>;
-  search: (searchCondition: SearchConditionType) => Promise<void>;
-  create: (curBook: BookType) => Promise<void>;
+  search: (newSearchCondition: SearchConditionType) => Promise<void>;
+  create: (curBook: BookType, isRedirect: boolean | false) => Promise<boolean>;
   find: (id: string) => Promise<void>;
-  update: (curBook: BookType) => Promise<void>;
-  delete: (curBook: BookType | undefined) => Promise<void>;
+  update: (curBook: BookType) => Promise<boolean>;
+  delete: (
+    curBook: BookType | undefined,
+    isRedirect: boolean | false,
+  ) => Promise<boolean>;
 }
 
-export function useBookService(): BookStore {
+export function useBookManagerService(): BookStore {
   const router = useRouter();
   const toasterService = useToasterService();
-  const { currentBook, bookResponse, searchCondition } = booksStorage();
+  const { currentBook, bookResponse, searchCondition, loading } =
+    booksStorage();
   const session = useAuthenticationService();
+
+  const search = async (newSearchCondition: SearchConditionType) => {
+    booksStorage.setState({ loading: false });
+    try {
+      const newBookResponse =
+        await BookManagerService.getList(newSearchCondition);
+      booksStorage.setState({
+        bookResponse: newBookResponse,
+        searchCondition: newSearchCondition,
+      });
+    } catch (error) {
+      toasterService.error(error);
+    }
+    booksStorage.setState({ loading: false });
+  };
 
   return {
     currentBook,
     bookResponse,
     searchCondition,
-    reload: async () => {
-      try {
-        const newBookResponse =
-          await BookManagerService.getList(searchCondition);
-        booksStorage.setState({ bookResponse: newBookResponse });
-      } catch (error) {
-        toasterService.error(error);
-      }
-    },
-    search: async (newSearchCondition: SearchConditionType) => {
-      try {
-        const newBookResponse =
-          await BookManagerService.getList(newSearchCondition);
-        booksStorage.setState({
-          bookResponse: newBookResponse,
-          searchCondition: newSearchCondition,
-        });
-      } catch (error) {
-        toasterService.error(error);
-      }
-    },
-    create: async (book: BookType) => {
+    loading,
+    search,
+    create: async (book: BookType, isRedirect: boolean | false) => {
       const isAuthenticate = session.requireAuth();
-      if (!isAuthenticate) return;
+      if (!isAuthenticate) return false;
       toasterService.clear();
-      booksStorage.setState({ currentBook: undefined });
+      booksStorage.setState({ currentBook: undefined, loading: true });
       try {
         const response = await BookManagerService.create(book);
         if (response.status) {
           booksStorage.setState({ currentBook: response.data });
-          router.push('/');
+          if (isRedirect) {
+            router.push('/');
+          } else {
+            search(booksStorage.getState().searchCondition);
+          }
         } else {
           toasterService.error(response.message);
         }
+        booksStorage.setState({ loading: false });
+        return response.status;
       } catch (error) {
         toasterService.error(error);
+        booksStorage.setState({ loading: false });
+        return false;
       }
     },
     find: async (id: string) => {
-      booksStorage.setState({ currentBook: undefined });
+      booksStorage.setState({ currentBook: undefined, loading: true });
       toasterService.clear();
       try {
         const response = await BookManagerService.find(id);
@@ -97,11 +106,13 @@ export function useBookService(): BookStore {
       } catch (error) {
         toasterService.error(error);
       }
+      booksStorage.setState({ loading: false });
     },
     update: async (book: BookType) => {
       const isAuthenticate = session.requireAuth();
-      if (!isAuthenticate) return;
+      if (!isAuthenticate) return false;
       toasterService.clear();
+      booksStorage.setState({ loading: true });
       booksStorage.setState({ currentBook: undefined });
       try {
         const response = await BookManagerService.update(book);
@@ -112,29 +123,42 @@ export function useBookService(): BookStore {
         } else {
           toasterService.error(response.message);
         }
+        booksStorage.setState({ loading: false });
+        return response.status;
       } catch (error) {
+        booksStorage.setState({ loading: false });
         toasterService.error(error);
+        return false;
       }
     },
-    delete: async (book: BookType | undefined) => {
+    delete: async (book: BookType | undefined, isRedirect: boolean | false) => {
       const isAuthenticate = session.requireAuth();
-      if (!isAuthenticate) return;
+      if (!isAuthenticate) return false;
       toasterService.clear();
       if (book === undefined) {
         toasterService.error('Not Found');
-        return;
+        return false;
       }
+      booksStorage.setState({ loading: true });
       try {
         const response = await BookManagerService.delete(book);
         if (response.status) {
           booksStorage.setState({ currentBook: undefined });
           toasterService.success(response.message, true);
-          router.push('/');
+          if (isRedirect) {
+            router.push('/');
+          } else {
+            search(booksStorage.getState().searchCondition);
+          }
         } else {
           toasterService.error(response.message);
         }
+        booksStorage.setState({ loading: false });
+        return response.status;
       } catch (error) {
+        booksStorage.setState({ loading: false });
         toasterService.error(error);
+        return false;
       }
     },
   };

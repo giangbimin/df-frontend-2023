@@ -7,7 +7,7 @@ import { BookForm } from '../../../_components/BookForm';
 import BookManagerService from '../../../_services/BookManagerService';
 import { BookType } from '../../../_types';
 import { useToasterService } from '../../../_helpers/client/useToasterService';
-import { useAuthenticationService } from '../../../_helpers/client/useAuthenticationService';
+import { useAuthenticationService } from '../../../_helpers/client/UseAuthenticationService';
 
 export default function NewBookPage() {
   const session = useAuthenticationService();

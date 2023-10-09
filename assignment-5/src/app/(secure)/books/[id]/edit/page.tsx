@@ -5,34 +5,34 @@ import Link from 'next/link';
 import { BookForm } from '../../../../_components/BookForm';
 import CustomNotFound from '../../../../not-found';
 import { BookType } from '../../../../_types';
-import { useBookService } from '../../../../_helpers/client/useBookService';
-import { useAuthenticationService } from '../../../../_helpers/client/useAuthenticationService';
+import { useBookManagerService } from '../../../../_helpers/client/UseBookManagerService';
+import { useAuthenticationService } from '../../../../_helpers/client/UseAuthenticationService';
+import { BtnBack } from '../../../../_components/common/BtnBack';
+import Loading from '../../../../loading';
 
 export default function ShowBookPage({ params: { id } }) {
   const session = useAuthenticationService();
-  const bookStoreService = useBookService();
+  const bookManager = useBookManagerService();
 
   const onSubmit = async (book: BookType) => {
-    bookStoreService.update(book);
+    bookManager.update(book);
   };
 
   useEffect(() => {
     session.requireAuth();
-    bookStoreService.find(id);
+    bookManager.find(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const { currentBook } = bookStoreService;
+  const { currentBook, loading } = bookManager;
 
+  if (loading) return <Loading text="Book" />;
   if (currentBook === undefined) return <CustomNotFound />;
-
   return (
     <section className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
       <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
         <div className="w-full md:w-1/2">
-          <h2 className="mb-4 text-xl tracking-tight font-extrabold  text-gray-900 dark:text-white">
-            Book {currentBook.id} Edit:
-          </h2>
+          <BtnBack />
         </div>
         <div className="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
           <Link
