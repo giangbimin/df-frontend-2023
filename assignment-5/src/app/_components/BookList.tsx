@@ -17,11 +17,7 @@ export const BookList = () => {
   const popup = useBookPopup();
 
   useEffect(() => {
-    bookManager.search({
-      page: parsedPage,
-      perPage: 5,
-      term: parsedTerm,
-    });
+    bookManager.search();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parsedPage, parsedTerm]);
 
@@ -35,7 +31,7 @@ export const BookList = () => {
   const deleteBook = async () => {
     const status = await bookManager.delete(popup.book, false);
     if (status) {
-      await bookManager.search(bookManager.searchCondition);
+      await bookManager.search();
       popup.close();
     }
   };
@@ -58,47 +54,51 @@ export const BookList = () => {
       <div id="books">
         <BookTableHeader />
         <div className="min-h-[345px] overflow-x-auto">
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-fixed">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b border-t dark:border-neutral-500">
-              <tr>
-                <th
-                  scope="col"
-                  className="px-4 py-5 border-r dark:border-neutral-500"
-                >
-                  Name
-                </th>
-                <th
-                  scope="col"
-                  className="px-4 py-5 border-r dark:border-neutral-500"
-                >
-                  Author
-                </th>
-                <th
-                  scope="col"
-                  className="px-4 py-5 border-r dark:border-neutral-500"
-                >
-                  Topic
-                </th>
-                <th
-                  scope="col"
-                  className="px-4 py-5 border-r dark:border-neutral-500"
-                >
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {bookStore.data.map((book) => (
-                <BookLine
-                  book={book}
-                  key={book.id}
-                  handleClickDelete={() => {
-                    openPopup(book);
-                  }}
-                />
-              ))}
-            </tbody>
-          </table>
+          {loading ? (
+            <Loading text="Books" />
+          ) : (
+            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-fixed">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b border-t dark:border-neutral-500">
+                <tr>
+                  <th
+                    scope="col"
+                    className="px-4 py-5 border-r dark:border-neutral-500"
+                  >
+                    Name
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-5 border-r dark:border-neutral-500"
+                  >
+                    Author
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-5 border-r dark:border-neutral-500"
+                  >
+                    Topic
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-4 py-5 border-r dark:border-neutral-500"
+                  >
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {bookStore.data.map((book) => (
+                  <BookLine
+                    book={book}
+                    key={book.id}
+                    handleClickDelete={() => {
+                      openPopup(book);
+                    }}
+                  />
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
         <BookTableFooter
           page={bookStore.page}

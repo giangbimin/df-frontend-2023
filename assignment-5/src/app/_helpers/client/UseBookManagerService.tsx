@@ -1,7 +1,7 @@
 'use client';
 
 import { create } from 'zustand';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useToasterService } from './useToasterService';
 import BookManagerService from '../../_services/BookManagerService';
 import {
@@ -30,7 +30,7 @@ const initialState = {
 const booksStorage = create<BookStoreStorage>(() => initialState);
 
 interface BookStore extends BookStoreStorage {
-  search: (newSearchCondition: SearchConditionType) => Promise<void>;
+  search: () => Promise<void>;
   create: (curBook: BookType, isRedirect: boolean | false) => Promise<boolean>;
   find: (id: string) => Promise<void>;
   update: (curBook: BookType) => Promise<boolean>;
@@ -42,20 +42,52 @@ interface BookStore extends BookStoreStorage {
 
 export function useBookManagerService(): BookStore {
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const toasterService = useToasterService();
   const { currentBook, bookResponse, searchCondition, loading } =
     booksStorage();
   const session = useAuthenticationService();
 
-  const search = async (newSearchCondition: SearchConditionType) => {
+  const getStoredSearchTerm = () => {
+    if (typeof localStorage === 'undefined') return '';
+    return localStorage.getItem('searchTerm') || '';
+  };
+
+  const setStoredSearchTerm = (value: string) => {
+    if (typeof localStorage === 'undefined') return;
+    localStorage.setItem('searchTerm', value);
+  };
+
+  const createQueryString = (newSearchCondition: SearchConditionType) => {
+    const params = new URLSearchParams(searchParams);
+    params.set('term', newSearchCondition.term);
+    params.set('page', `${newSearchCondition.page}`);
+    return params.toString();
+  };
+
+  const loadSearchCondition = async (): Promise<SearchConditionType> => {
+    const parsedPage = parseInt(searchParams?.get('page') ?? '1', 10) || 1;
+    const parsedTerm = searchParams?.get('term') || getStoredSearchTerm() || '';
+    return {
+      page: parsedPage,
+      perPage: 5,
+      term: parsedTerm,
+    };
+  };
+
+  const search = async () => {
     booksStorage.setState({ loading: false });
     try {
+      const newSearchCondition = await loadSearchCondition();
       const newBookResponse =
         await BookManagerService.getList(newSearchCondition);
+      setStoredSearchTerm(newSearchCondition.term);
       booksStorage.setState({
         bookResponse: newBookResponse,
         searchCondition: newSearchCondition,
       });
+      router.push(`${pathname}?${createQueryString(newSearchCondition)}`);
     } catch (error) {
       toasterService.error(error);
     }
@@ -80,7 +112,7 @@ export function useBookManagerService(): BookStore {
           if (isRedirect) {
             router.push('/');
           } else {
-            search(booksStorage.getState().searchCondition);
+            search();
           }
         } else {
           toasterService.error(response.message);
@@ -148,7 +180,7 @@ export function useBookManagerService(): BookStore {
           if (isRedirect) {
             router.push('/');
           } else {
-            search(booksStorage.getState().searchCondition);
+            search();
           }
         } else {
           toasterService.error(response.message);
