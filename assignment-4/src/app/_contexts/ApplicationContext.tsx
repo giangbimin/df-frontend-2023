@@ -75,6 +75,18 @@ export const ApplicationProvider = ({ children }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [theme]);
 
+  useEffect(() => {
+    if (toaster !== undefined) {
+      const timer = setTimeout(() => {
+        clearToaster();
+      }, 3000);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [toaster]);
+
   // const login = (user: UserType) => {
   //   setCurrentUser(user);
   // };

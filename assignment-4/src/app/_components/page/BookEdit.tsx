@@ -7,7 +7,6 @@ import { useBookContext } from '../../_contexts/BookContext';
 import CustomNotFound from '../../not-found';
 import { BtnBack } from '../common/BtnBack';
 import { useApplicationContext } from '../../_contexts/ApplicationContext';
-import { BookType } from '../../_types';
 import Loading from '../../loading';
 import { BookForm } from '../BookForm';
 
@@ -17,7 +16,7 @@ interface BookProps {
 export const BookEdit: FC<BookProps> = ({ id }) => {
   const { toasterSuccess, toasterError } = useApplicationContext();
   const { loading, showLoading, hideLoading } = useApplicationContext();
-  const { currentBook, initBook, updateBook } = useBookContext();
+  const { currentBook, initBook, changeBook, updateBook } = useBookContext();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,8 +29,8 @@ export const BookEdit: FC<BookProps> = ({ id }) => {
   }, []);
 
   const router = useRouter();
-  const onSubmit = async (book: BookType) => {
-    const status = await updateBook(book);
+  const onSubmit = async () => {
+    const status = await updateBook();
     if (status) {
       router.push('/');
       toasterSuccess('Update Success!');
@@ -59,7 +58,12 @@ export const BookEdit: FC<BookProps> = ({ id }) => {
         </div>
       </div>
       <div className="space-y-3 md:space-y-0 md:space-x-4 p-4">
-        <BookForm book={currentBook} onSubmit={onSubmit} disableEdit={false} />
+        <BookForm
+          book={currentBook}
+          onSubmit={onSubmit}
+          onChange={changeBook}
+          disableEdit={false}
+        />
       </div>
     </section>
   );

@@ -1,24 +1,24 @@
+import { ChangeEvent, useState } from 'react';
 import { useApplicationContext } from '../_contexts/ApplicationContext';
 import { useBooksContext } from '../_contexts/BooksContext';
-import { BookType } from '../_types';
+import { BookType, defaultBook } from '../_types';
 import { BookForm } from './BookForm';
 
 export const CreateBookPopup = () => {
   const { toasterSuccess, toasterError } = useApplicationContext();
-  const defaultBook: BookType = {
-    id: '',
-    createdAt: 0,
-    title: '',
-    author: '',
-    topic: '',
-  };
-
+  const [book, setBook] = useState<BookType>(defaultBook);
   const { isShowCreateForm, hideCreateForm, createBook, refresh } =
     useBooksContext();
 
   if (!isShowCreateForm) return null;
 
-  const onSubmitCreateBook = async (book: BookType) => {
+  const changeBook = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    const newBook = { ...book, [name]: value };
+    setBook(newBook);
+  };
+
+  const onSubmitCreateBook = async () => {
     const status = await createBook(book);
     if (status) {
       toasterSuccess('Created!');
@@ -65,8 +65,9 @@ export const CreateBookPopup = () => {
               Add Book
             </h3>
             <BookForm
-              book={defaultBook}
+              book={book}
               onSubmit={onSubmitCreateBook}
+              onChange={changeBook}
               disableEdit={false}
             />
           </div>

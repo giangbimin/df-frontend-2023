@@ -14,4 +14,12 @@ interface BookType {
   topic: string;
 }
 
+export const defaultBook: BookType = {
+  id: '',
+  createdAt: 0,
+  title: '',
+  author: '',
+  topic: '',
+};
+
 export type { BookType };

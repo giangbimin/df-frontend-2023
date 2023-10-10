@@ -1,6 +1,12 @@
 'use client';
 
-import { createContext, useContext, useMemo, useState } from 'react';
+import {
+  ChangeEvent,
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
 
 import { BookType } from '../_types';
 import BookManagerService from '../_services/BookManagerService';
@@ -8,12 +14,14 @@ import BookManagerService from '../_services/BookManagerService';
 type BookContextProps = {
   currentBook: BookType | undefined;
   initBook: (id: string) => Promise<void>;
-  updateBook: (book: BookType) => Promise<boolean>;
+  changeBook: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  updateBook: () => Promise<boolean>;
 };
 
 const BookContext = createContext<BookContextProps>({
   currentBook: undefined,
   initBook: async () => {},
+  changeBook: () => {},
   updateBook: async () => false,
 });
 
@@ -34,18 +42,26 @@ export const BookProvider = ({ children }) => {
     }
   };
 
-  const updateBook = async (book: BookType) => {
-    const response = await BookManagerService.update(book);
+  const updateBook = async () => {
+    if (!currentBook) return false;
+    const response = await BookManagerService.update(currentBook);
     if (response.status) {
-      setCurrentBook(book);
+      setCurrentBook(currentBook);
     }
     return response.status;
+  };
+
+  const changeBook = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    if (currentBook === undefined) return;
+    const { name, value } = e.target;
+    setCurrentBook({ ...currentBook, [name]: value });
   };
 
   const useBookContext = useMemo<BookContextProps>(
     () => ({
       currentBook,
       initBook,
+      changeBook,
       updateBook,
     }),
     [currentBook],

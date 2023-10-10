@@ -25,9 +25,9 @@ export const BookList = () => {
         {loading ? (
           <Loading text="Books" />
         ) : (
-          <DeleteBookProvider>
-            <>
-              <CreateBookPopup />
+          <>
+            <CreateBookPopup />
+            <DeleteBookProvider>
               <ConfirmDeleteDialog />
               <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 table-fixed">
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 border-b border-t dark:border-neutral-500">
@@ -64,8 +64,8 @@ export const BookList = () => {
                   ))}
                 </tbody>
               </table>
-            </>
-          </DeleteBookProvider>
+            </DeleteBookProvider>
+          </>
         )}
       </div>
       <BookTableFooter />
