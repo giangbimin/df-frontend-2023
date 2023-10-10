@@ -1,112 +1,91 @@
 'use client';
 
-import { FC } from 'react';
-import { useForm, SubmitHandler, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { BookSchemaType, BookType, BookSchema, validTopics } from '../_types';
-import { ErrorMessage } from './common/ErrorMessage';
+import { ChangeEvent, FC, useState } from 'react';
+import { BookType, validTopics } from '../_types';
 
 interface BookProps {
   book: BookType;
-  onSubmit?: (curBook: BookType) => Promise<void>;
-  disableEdit: boolean;
+  onSubmit: (book: BookType) => Promise<void>;
+  disableEdit?: boolean;
 }
 
 export const BookForm: FC<BookProps> = ({ book, onSubmit, disableEdit }) => {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<BookSchemaType>({
-    resolver: zodResolver(BookSchema),
-  });
+  const [curBook, setBook] = useState<BookType>(book);
 
-  const onSubmitForm: SubmitHandler<BookSchemaType> = (data) => {
-    if (onSubmit) {
-      onSubmit({
-        ...book,
-        title: data.title,
-        author: data.author,
-        topic: data.topic,
-      });
-    }
+  const onSubmitForm = async (e) => {
+    e.preventDefault();
+    await onSubmit(curBook);
+  };
+
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    const { name, value } = e.target;
+    console.log(name);
+    console.log(value);
+    setBook((prevBook) => ({
+      ...prevBook,
+      [name]: value,
+    }));
   };
 
   return (
-    <form className="space-y-8" onSubmit={handleSubmit(onSubmitForm)}>
+    <form className="space-y-8" onSubmit={onSubmitForm}>
       <div className="flex flex-col gap-4 mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-        <Controller
-          name="title"
-          control={control}
-          defaultValue={book.title}
-          render={({ field }) => (
-            <label htmlFor="title">
-              <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Title:
-              </p>
-              <ErrorMessage error={errors.title} />
-              <input
-                {...field}
-                type="text"
-                id="title"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Book Title"
-                disabled={disableEdit}
-                required
-              />
-            </label>
-          )}
-        />
-        <Controller
-          name="author"
-          control={control}
-          defaultValue={book.author}
-          render={({ field }) => (
-            <label htmlFor="author">
-              <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Author:
-              </p>
-              <ErrorMessage error={errors.author} />
-              <input
-                {...field}
-                type="text"
-                id="author"
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Book Author"
-                disabled={disableEdit}
-                required
-              />
-            </label>
-          )}
-        />
-        <Controller
-          name="topic"
-          control={control}
-          defaultValue={book.topic}
-          render={({ field }) => (
-            <label htmlFor="category">
-              <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                Topic:
-              </p>
-              <ErrorMessage error={errors.topic} />
-              <select
-                {...field}
-                id="category"
-                disabled={disableEdit}
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-              >
-                <option value="" hidden>
-                  Select category
-                </option>
-                {validTopics.map((topic) => (
-                  <option value={topic} key={topic}>
-                    {topic}
-                  </option>
-                ))}
-              </select>
-            </label>
-          )}
-        />
+        <label htmlFor="title">
+          <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            Title:
+          </p>
+          <input
+            id="title"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+            name="title"
+            type="text"
+            value={curBook.title}
+            placeholder="Book Title"
+            onChange={handleChange}
+            disabled={disableEdit}
+            required
+          />
+        </label>
+        <label htmlFor="author">
+          <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            Author:
+          </p>
+          <input
+            id="author"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+            name="author"
+            type="text"
+            value={curBook.author}
+            placeholder="Book Author"
+            onChange={handleChange}
+            disabled={disableEdit}
+            required
+          />
+        </label>
+        <label htmlFor="topic">
+          <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+            Topic:
+          </p>
+          <select
+            id="topic"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+            name="topic"
+            value={curBook.topic}
+            onChange={handleChange}
+            disabled={disableEdit}
+          >
+            <option value="" hidden>
+              Select category
+            </option>
+            {validTopics.map((topic) => (
+              <option value={topic} key={topic}>
+                {topic}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
       {!disableEdit && (
         <div className="w-full text-right">

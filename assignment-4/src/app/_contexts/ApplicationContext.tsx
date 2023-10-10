@@ -6,25 +6,25 @@ import { ToasterType } from '../_types';
 type ApplicationContextProps = {
   theme: string;
   toggleTheme: () => void;
+  loading: boolean;
+  showLoading: () => void;
+  hideLoading: () => void;
   toaster: ToasterType | undefined;
   toasterSuccess: (message: string) => void;
   toasterError: (message: string) => void;
   clearToaster: () => void;
-  loading: boolean;
-  showLoading: () => void;
-  hideLoading: () => void;
 };
 
 const ApplicationContext = createContext<ApplicationContextProps>({
   theme: 'light',
   toggleTheme: () => {},
+  loading: false,
+  showLoading: () => {},
+  hideLoading: () => {},
   toaster: undefined,
   toasterSuccess: () => {},
   toasterError: () => {},
   clearToaster: () => {},
-  loading: false,
-  showLoading: () => {},
-  hideLoading: () => {},
 });
 
 export const ApplicationProvider = ({ children }) => {
@@ -118,14 +118,14 @@ export const ApplicationProvider = ({ children }) => {
   const useApplicationContext = useMemo<ApplicationContextProps>(
     () => ({
       theme,
-      loading,
-      toaster,
       toggleTheme,
-      toasterSuccess,
-      toasterError,
       clearToaster,
+      loading,
       showLoading,
       hideLoading,
+      toaster,
+      toasterSuccess,
+      toasterError,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [theme, toaster, loading],

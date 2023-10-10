@@ -1,8 +1,10 @@
+import { useApplicationContext } from '../_contexts/ApplicationContext';
 import { useBooksContext } from '../_contexts/BooksContext';
 import { BookType } from '../_types';
 import { BookForm } from './BookForm';
 
 export const CreateBookPopup = () => {
+  const { toasterSuccess, toasterError } = useApplicationContext();
   const defaultBook: BookType = {
     id: '',
     createdAt: 0,
@@ -19,8 +21,11 @@ export const CreateBookPopup = () => {
   const onSubmitCreateBook = async (book: BookType) => {
     const status = await createBook(book);
     if (status) {
+      toasterSuccess('Created!');
       refresh();
       hideCreateForm();
+    } else {
+      toasterError('Create False');
     }
   };
 

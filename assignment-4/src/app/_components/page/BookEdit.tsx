@@ -15,6 +15,7 @@ interface BookProps {
   id: string;
 }
 export const BookEdit: FC<BookProps> = ({ id }) => {
+  const { toasterSuccess, toasterError } = useApplicationContext();
   const { loading, showLoading, hideLoading } = useApplicationContext();
   const { currentBook, initBook, updateBook } = useBookContext();
 
@@ -31,7 +32,12 @@ export const BookEdit: FC<BookProps> = ({ id }) => {
   const router = useRouter();
   const onSubmit = async (book: BookType) => {
     const status = await updateBook(book);
-    if (status) router.push('/');
+    if (status) {
+      router.push('/');
+      toasterSuccess('Update Success!');
+    } else {
+      toasterError('Update False!');
+    }
   };
 
   if (loading) return <Loading text={`Book id: ${id}`} />;
@@ -49,12 +55,6 @@ export const BookEdit: FC<BookProps> = ({ id }) => {
             className="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
           >
             All Books
-          </Link>
-          <Link
-            href="/books/new"
-            className="flex items-center justify-center text-white bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800"
-          >
-            New Book
           </Link>
         </div>
       </div>
