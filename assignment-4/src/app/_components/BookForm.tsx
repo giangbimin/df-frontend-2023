@@ -21,8 +21,6 @@ export const BookForm: FC<BookProps> = ({ book, onSubmit, disableEdit }) => {
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
-    console.log(name);
-    console.log(value);
     setBook((prevBook) => ({
       ...prevBook,
       [name]: value,
