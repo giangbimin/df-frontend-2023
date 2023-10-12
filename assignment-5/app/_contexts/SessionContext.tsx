@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useMemo, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   LoginResponseType,
   LogoutResponseType,
@@ -15,6 +16,7 @@ type SessionContextProps = {
   signUp: (user: RegisterUserType) => Promise<RegisterResponseType | undefined>;
   signIn: (user: UserType) => Promise<LoginResponseType | undefined>;
   signOut: () => Promise<LogoutResponseType | undefined>;
+  authenticateUser: () => boolean;
 };
 
 const SessionContext = createContext<SessionContextProps>({
@@ -22,9 +24,12 @@ const SessionContext = createContext<SessionContextProps>({
   signUp: async () => undefined,
   signIn: async () => undefined,
   signOut: async () => undefined,
+  authenticateUser: () => true,
 });
 
 export const SessionProvider = ({ children }) => {
+  const routers = useRouter();
+
   const [currentUser, setCurrentUser] = useState<UserType | undefined>(
     undefined,
   );
@@ -57,12 +62,19 @@ export const SessionProvider = ({ children }) => {
     return response;
   };
 
+  const authenticateUser = () => {
+    const isLogin = currentUser !== undefined;
+    if (!isLogin) routers.push('/login');
+    return isLogin;
+  };
+
   const useSessionContext = useMemo<SessionContextProps>(
     () => ({
       currentUser,
       signUp,
       signIn,
       signOut,
+      authenticateUser,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentUser],

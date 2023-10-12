@@ -10,12 +10,14 @@ import { useApplicationContext } from '../../_contexts/ApplicationContext';
 import Loading from '../../loading';
 import { BookForm } from '../BookForm';
 import { BookType } from '../../_types';
+import { useSessionContext } from '../../_contexts/SessionContext';
 
 interface BookProps {
   id: string;
 }
 export const BookEdit: FC<BookProps> = ({ id }) => {
   const { toasterSuccess, toasterError } = useApplicationContext();
+  const { authenticateUser } = useSessionContext();
   const { loading, showLoading, hideLoading } = useApplicationContext();
   const { currentBook, initBook, updateBook } = useBookContext();
 
@@ -31,6 +33,11 @@ export const BookEdit: FC<BookProps> = ({ id }) => {
 
   const router = useRouter();
   const onSubmit = async (book: BookType) => {
+    const isLogin = authenticateUser();
+    if (!isLogin) {
+      toasterError('require Login!');
+      return;
+    }
     const response = await updateBook(book);
     if (response?.status) {
       router.push('/');

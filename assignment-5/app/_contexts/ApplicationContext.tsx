@@ -28,22 +28,9 @@ const ApplicationContext = createContext<ApplicationContextProps>({
 });
 
 export const ApplicationProvider = ({ children }) => {
-  // const [currentUser, setCurrentUser] = useState<UserType | undefined>(
-  //   undefined,
-  // );
   const [theme, setTheme] = useState<string>('light');
   const [loading, setLoading] = useState<boolean>(false);
   const [toaster, setToaster] = useState<ToasterType | undefined>(undefined);
-
-  // useEffect(() => {
-  //   const fetchCurrentUser = async () => {
-  //     const session = UserManagerService;
-  //     const user = await session.currentUser();
-  //     setCurrentUser(user);
-  //   };
-
-  //   fetchCurrentUser();
-  // }, []);
 
   const getThemeFromStorage = async () => {
     if (typeof localStorage === 'undefined') return '';
@@ -86,14 +73,6 @@ export const ApplicationProvider = ({ children }) => {
       };
     }
   }, [toaster]);
-
-  // const login = (user: UserType) => {
-  //   setCurrentUser(user);
-  // };
-
-  // const logout = () => {
-  //   setCurrentUser(undefined);
-  // };
 
   const renderTheme = () => {
     const removeClass = theme === 'dark' ? 'light' : 'dark';

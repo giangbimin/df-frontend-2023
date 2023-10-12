@@ -2,17 +2,24 @@
 
 import { useApplicationContext } from '../_contexts/ApplicationContext';
 import { useBooksContext } from '../_contexts/BooksContext';
+import { useSessionContext } from '../_contexts/SessionContext';
 import { BookType, defaultBook } from '../_types';
 import { BookForm } from './BookForm';
 
 export const CreateBookPopup = () => {
   const { toasterSuccess, toasterError } = useApplicationContext();
+  const { authenticateUser } = useSessionContext();
   const { isShowCreateForm, hideCreateForm, createBook, refresh } =
     useBooksContext();
 
   if (!isShowCreateForm) return null;
 
   const onSubmitCreateBook = async (book: BookType) => {
+    const isLogin = authenticateUser();
+    if (!isLogin) {
+      toasterError('require Login!');
+      return;
+    }
     const response = await createBook(book);
     if (response?.status) {
       toasterSuccess(response.message);
