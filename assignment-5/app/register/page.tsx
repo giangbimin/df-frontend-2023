@@ -8,6 +8,7 @@ import { ErrorMessage } from '../_components/common/ErrorMessage';
 import { SignUpSchemaType, SignUpSchema } from '../_types';
 import { useSessionContext } from '../_contexts/SessionContext';
 import { useApplicationContext } from '../_contexts/ApplicationContext';
+import { PasswordStrength } from '../_components/common/PasswordStrength';
 
 export default function RegisterPage() {
   const routes = useRouter();
@@ -18,6 +19,7 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    watch,
   } = useForm<SignUpSchemaType>({
     resolver: zodResolver(SignUpSchema),
   });
@@ -74,7 +76,7 @@ export default function RegisterPage() {
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
                 <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Password
+                  Password <PasswordStrength password={watch('password', '')} />
                 </p>
                 <ErrorMessage error={errors.password} />
                 <input

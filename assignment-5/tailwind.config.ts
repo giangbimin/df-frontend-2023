@@ -64,5 +64,6 @@ const config: Config = {
     },
   },
   plugins: [],
+  safelist: [{ pattern: /^text-(red|green|blue|yellow)-800$/ }],
 };
 export default config;
