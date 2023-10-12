@@ -12,6 +12,7 @@ export const LoginSchema = z.object({
       message: 'Password must contain at least 1 uppercase letter',
     })
     .refine(
+      // eslint-disable-next-line no-useless-escape
       (password) => /[!@#$%^&*()_+|~\- =\[\]{};':"\\<>,./?]+/.test(password),
       {
         path: ['password'],

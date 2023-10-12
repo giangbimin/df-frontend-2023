@@ -13,6 +13,7 @@ export const SignUpSchema = z
         message: 'Password must contain at least 1 uppercase letter',
       })
       .refine(
+        // eslint-disable-next-line no-useless-escape
         (password) => /[!@#$%^&*()_+|~\- =\[\]{};':"\\<>,./?]+/.test(password),
         {
           path: ['password'],
