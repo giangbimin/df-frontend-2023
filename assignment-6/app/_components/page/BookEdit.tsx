@@ -1,54 +1,44 @@
 'use client';
 
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import useSWR from 'swr';
 import { useBookContext } from '../../_contexts/BookContext';
 import CustomNotFound from '../../not-found';
 import { BtnBack } from '../common/BtnBack';
 import { useApplicationContext } from '../../_contexts/ApplicationContext';
-import Loading from '../../loading';
 import { BookForm } from '../BookForm';
-import { BookType } from '../../_types';
-import { useSessionContext } from '../../_contexts/SessionContext';
+import { fetchWrapper } from '../../_services/common/fetchWrapper';
+import { Book, BookPayload, ErrorResponse } from '../../_types';
+import Loading from '../../loading';
 
 interface BookProps {
   id: string;
 }
 export const BookEdit: FC<BookProps> = ({ id }) => {
   const { toasterSuccess, toasterError } = useApplicationContext();
-  const { authenticateUser } = useSessionContext();
-  const { loading, showLoading, hideLoading } = useApplicationContext();
-  const { currentBook, initBook, updateBook } = useBookContext();
+  const { updateBook } = useBookContext();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      showLoading();
-      await initBook(id);
-    };
-    fetchData();
-    hideLoading();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const fetcher = (url: string) => fetchWrapper(url, 'GET');
 
-  const router = useRouter();
-  const onSubmit = async (book: BookType) => {
-    const isLogin = authenticateUser();
-    if (!isLogin) {
-      toasterError('require Login!');
-      return;
-    }
-    const response = await updateBook(book);
-    if (response?.status) {
-      router.push('/');
-      toasterSuccess(response.message);
+  const { data, isLoading } = useSWR(
+    `https://develop-api.bookstore.dwarvesf.com/api/v1/books/${id}`,
+    fetcher,
+  );
+
+  if (isLoading) return <Loading text="Book" />;
+  const currentBook = data?.success ? (data.data as Book) : undefined;
+  if (currentBook === undefined) return <CustomNotFound />;
+
+  const onSubmit = async (updateBookPayload: BookPayload) => {
+    const response = await updateBook(id, updateBookPayload);
+    if (response.success) {
+      toasterSuccess('Update Success');
     } else {
-      toasterError(response?.message || 'Update False!');
+      const errorResponse = response.data as ErrorResponse;
+      toasterError(errorResponse.message || 'Update False');
     }
   };
-
-  if (loading) return <Loading text={`Book id: ${id}`} />;
-  if (currentBook === undefined) return <CustomNotFound />;
 
   return (
     <section className="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
@@ -66,7 +56,15 @@ export const BookEdit: FC<BookProps> = ({ id }) => {
         </div>
       </div>
       <div className="space-y-3 md:space-y-0 md:space-x-4 p-4">
-        <BookForm book={currentBook} onSubmit={onSubmit} disableEdit={false} />
+        <BookForm
+          bookPayload={{
+            name: currentBook.name,
+            author: currentBook.author,
+            TopicID: currentBook.topic.id,
+          }}
+          onSubmit={onSubmit}
+          disableEdit={false}
+        />
       </div>
     </section>
   );

@@ -4,11 +4,11 @@ import Link from 'next/link';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { ErrorMessage } from '../_components/common/ErrorMessage';
-import { SignUpSchemaType, SignUpSchema } from '../_types';
-import { useSessionContext } from '../_contexts/SessionContext';
-import { useApplicationContext } from '../_contexts/ApplicationContext';
-import { PasswordStrength } from '../_components/common/PasswordStrength';
+import { ErrorMessage } from '../../_components/common/ErrorMessage';
+import { SignUpSchemaType, SignUpSchema } from '../../_types';
+import { ErrorResponse } from '../../_types/api/request.d';
+import { useSessionContext } from '../../_contexts/SessionContext';
+import { useApplicationContext } from '../../_contexts/ApplicationContext';
 
 export default function RegisterPage() {
   const routes = useRouter();
@@ -19,22 +19,29 @@ export default function RegisterPage() {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-    watch,
   } = useForm<SignUpSchemaType>({
     resolver: zodResolver(SignUpSchema),
   });
 
   const onSubmit: SubmitHandler<SignUpSchemaType> = async (data) => {
-    const response = await signUp({
-      email: data.email,
-      password: data.password,
-      passwordConfirmation: data.passwordConfirmation,
-    });
-    if (response?.status) {
-      toasterSuccess(response.message);
-      routes.replace('/login');
-    } else {
-      toasterError(response?.message || ' Error signUp');
+    try {
+      const response = await signUp({
+        avatar: data.avatar,
+        email: data.email,
+        fullName: data.fullName,
+        password: data.password,
+      });
+      if (response !== undefined) {
+        if (response.success) {
+          toasterSuccess('sign up success');
+          routes.push('/login');
+        } else {
+          const errorResponse = response.data as ErrorResponse;
+          toasterError(errorResponse.message || 'sign up false');
+        }
+      }
+    } catch (error) {
+      toasterError(error);
     }
   };
 
@@ -63,6 +70,7 @@ export default function RegisterPage() {
                 <ErrorMessage error={errors.email} />
                 <input
                   {...register('email')}
+                  autoComplete="username"
                   type="email"
                   name="email"
                   id="email"
@@ -72,36 +80,53 @@ export default function RegisterPage() {
                 />
               </label>
               <label
-                htmlFor="password"
+                htmlFor="avatar url"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
                 <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Password <PasswordStrength password={watch('password', '')} />
+                  Your avatar url
                 </p>
-                <ErrorMessage error={errors.password} />
+                <ErrorMessage error={errors.avatar} />
                 <input
-                  {...register('password')}
-                  type="password"
-                  name="password"
-                  id="password"
-                  placeholder="••••••••"
+                  {...register('avatar')}
+                  type="text"
+                  name="avatar"
+                  id="avatar"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   required
                 />
               </label>
               <label
-                htmlFor="passwordConfirmation"
+                htmlFor="full name"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
                 <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-                  Password confirmation
+                  Your full name
                 </p>
-                <ErrorMessage error={errors.passwordConfirmation} />
+                <ErrorMessage error={errors.fullName} />
                 <input
-                  {...register('passwordConfirmation')}
+                  {...register('fullName')}
+                  type="text"
+                  name="fullName"
+                  id="fullName"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  required
+                />
+              </label>
+              <label
+                htmlFor="password"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+                  Password
+                </p>
+                <ErrorMessage error={errors.password} />
+                <input
+                  {...register('password')}
+                  autoComplete="current-password"
                   type="password"
-                  name="passwordConfirmation"
-                  id="passwordConfirmation"
+                  name="password"
+                  id="password"
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   required

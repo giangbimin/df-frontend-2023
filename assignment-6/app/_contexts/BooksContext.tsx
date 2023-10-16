@@ -12,29 +12,30 @@ import {
 
 import { useSearchParams } from 'next/navigation';
 import {
-  BookResponseType,
-  BookType,
-  SearchConditionType,
-  defaultSearchCondition,
-} from '../_types';
+  Book,
+  BookPayload,
+  ListBookPayload,
+  defaultListBookPayload,
+} from '../_types/api/book.d';
+import { fetchWrapper } from '../_services/common/fetchWrapper';
 import {
-  BooksPagingType,
-  defaultBooksPaging,
-} from '../_types/book/BooksPagingType';
-import BookManagerService from '../_services/BookManagerService';
+  defaultFetchResponse,
+  defaultMetadata,
+  FetchResponse,
+  Metadata,
+} from '../_types/api/request.d';
 
 type BooksContextProps = {
   loading: boolean;
   showLoading: () => void;
   hideLoading: () => void;
-  searchCondition: SearchConditionType;
-  setSearchCondition: Dispatch<SetStateAction<SearchConditionType>>;
-  books: BookType[];
-  setBooks: Dispatch<SetStateAction<BookType[]>>;
-  paging: BooksPagingType;
-  filterBooks: (searchCondition: SearchConditionType) => void;
-  refresh: () => void;
-  createBook: (book: BookType) => Promise<BookResponseType | undefined>;
+  searchCondition: ListBookPayload;
+  setSearchCondition: Dispatch<SetStateAction<ListBookPayload>>;
+  books: Book[];
+  setBooks: Dispatch<SetStateAction<Book[]>>;
+  filterBooks: (searchCondition: ListBookPayload) => void;
+  paging: Metadata;
+  createBook: (bookPayload: BookPayload) => Promise<FetchResponse>;
   isShowCreateForm: boolean;
   showCreateForm: () => void;
   hideCreateForm: () => void;
@@ -44,14 +45,13 @@ const BooksContext = createContext<BooksContextProps>({
   loading: false,
   showLoading: () => {},
   hideLoading: () => {},
-  searchCondition: defaultSearchCondition,
+  searchCondition: defaultListBookPayload,
   setSearchCondition: () => {},
   books: [],
   setBooks: () => {},
-  paging: defaultBooksPaging,
   filterBooks: async () => {},
-  refresh: () => {},
-  createBook: async () => undefined,
+  paging: defaultMetadata,
+  createBook: async () => defaultFetchResponse,
   isShowCreateForm: false,
   showCreateForm: () => {},
   hideCreateForm: () => {},
@@ -59,72 +59,76 @@ const BooksContext = createContext<BooksContextProps>({
 
 export const BooksProvider = ({ children }) => {
   const [loading, setLoading] = useState<boolean>(false);
-  const [searchCondition, setSearchCondition] = useState<SearchConditionType>(
-    defaultSearchCondition,
+  const [searchCondition, setSearchCondition] = useState<ListBookPayload>(
+    defaultListBookPayload,
   );
-  const [books, setBooks] = useState<BookType[]>([]);
-  const [paging, setPaging] = useState<BooksPagingType>(defaultBooksPaging);
+  const [books, setBooks] = useState<Book[]>([]);
+  const [paging, setPaging] = useState<Metadata>(defaultMetadata);
   const [isShowCreateForm, setIsShowCreateForm] = useState<boolean>(false);
 
-  const filterBooks = async (newSearchCondition: SearchConditionType) => {
-    showLoading();
-    const response = await BookManagerService.getList(newSearchCondition);
-    if (response.status) {
-      const { books, page, perPage, total, totalPages } = response.data;
-      setBooks(books);
-      setPaging({ page, perPage, total, totalPages });
-    }
-    hideLoading();
-  };
-
-  const getSearchTermFromStorage = async () => {
+  const getSearchQueryFromStorage = async () => {
     if (typeof localStorage === 'undefined') return '';
-    const savedTerm = await localStorage.getItem('searchTerm');
-    return savedTerm || '';
+    const savedQuery = await localStorage.getItem('query');
+    return savedQuery || '';
   };
 
-  const saveSearchTermToStorage = async (term: string) => {
+  const saveSearchQueryToStorage = async (query: string) => {
     if (typeof localStorage === 'undefined') return;
-    localStorage.setItem('searchTerm', term);
+    localStorage.setItem('query', query);
   };
 
   const searchParams = useSearchParams();
 
-  const initSearchCondition = async (): Promise<SearchConditionType> => {
+  const initSearchCondition = async (): Promise<ListBookPayload> => {
     const parsedPage = parseInt(searchParams?.get('page') ?? '1', 10) || 1;
-    const parsedTerm = searchParams?.get('term') || '';
-    const curTerm =
-      parsedTerm === '' ? await getSearchTermFromStorage() : parsedTerm;
+    const parsedPageSize =
+      parseInt(searchParams?.get('pageSize') ?? '5', 10) || 5;
+    const parsedQuery = searchParams?.get('query') || '';
+    const curQuery =
+      parsedQuery === '' ? await getSearchQueryFromStorage() : parsedQuery;
     return {
       ...searchCondition,
       page: parsedPage,
-      term: curTerm,
+      query: curQuery,
+      pageSize: parsedPageSize,
     };
   };
 
   useEffect(() => {
-    const updateSearchTerm = async () => {
+    const updateSearchQuery = async () => {
       const currentSearchCondition = await initSearchCondition();
       if (
-        currentSearchCondition.term !== searchCondition.term ||
-        currentSearchCondition.page !== searchCondition.page
+        currentSearchCondition.query !== searchCondition.query ||
+        currentSearchCondition.page !== searchCondition.page ||
+        currentSearchCondition.pageSize !== searchCondition.pageSize
       )
         setSearchCondition(currentSearchCondition);
-      saveSearchTermToStorage(currentSearchCondition.term);
+      saveSearchQueryToStorage(currentSearchCondition.query || '');
     };
 
-    updateSearchTerm();
+    updateSearchQuery();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
-  const refresh = async () => {
-    await filterBooks(searchCondition);
+  const filterBooks = async (searchCondition: ListBookPayload) => {
+    const response = await fetchWrapper(
+      `https://develop-api.bookstore.dwarvesf.com/api/v1/books`,
+      'GET',
+      searchCondition,
+    );
+    if (response.success) {
+      setBooks(response.data as Book[]);
+      if (response.metadata) setPaging(response.metadata);
+    }
+    hideLoading();
   };
 
-  const createBook = async (book: BookType) => {
-    showLoading();
-    const response = await BookManagerService.create(book);
-    hideLoading();
+  const createBook = async (bookPayload: BookPayload) => {
+    const response = await fetchWrapper(
+      `https://develop-api.bookstore.dwarvesf.com/api/v1/books`,
+      'POST',
+      bookPayload,
+    );
     return response;
   };
 
@@ -153,9 +157,8 @@ export const BooksProvider = ({ children }) => {
       setSearchCondition,
       books,
       setBooks,
-      paging,
       filterBooks,
-      refresh,
+      paging,
       createBook,
       isShowCreateForm,
       showCreateForm,

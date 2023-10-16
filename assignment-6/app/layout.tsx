@@ -3,9 +3,9 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Suspense } from 'react';
 import Loading from './loading';
-import Layout from './_components/Layout';
 import { ApplicationProvider } from './_contexts/ApplicationContext';
 import { SessionProvider } from './_contexts/SessionContext';
+import Layout from './_components/Layout';
 
 const inter = Inter({ subsets: ['latin'] });
 

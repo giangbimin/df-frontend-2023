@@ -1,65 +1,79 @@
 'use client';
 
-import { createContext, useContext, useMemo, useState, useEffect } from 'react';
+import { Dispatch, createContext, useContext, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
-  LoginResponseType,
-  LogoutResponseType,
-  RegisterResponseType,
-  RegisterUserType,
-  UserType,
-} from '../_types';
-import UserManagerService from '../_services/UserManagerService';
+  SignInPayload,
+  SignInResponse,
+  SignUpPayload,
+} from '../_types/api/auth.d';
+import { fetchWrapper } from '../_services/common/fetchWrapper';
+import { Profile } from '../_types/api/user.d';
+import { clearCookie, setCookie } from '../_services/utils/cookieUtils';
+import { FetchResponse } from '../_types/api/request.d';
 
 type SessionContextProps = {
-  currentUser: UserType | undefined;
-  signUp: (user: RegisterUserType) => Promise<RegisterResponseType | undefined>;
-  signIn: (user: UserType) => Promise<LoginResponseType | undefined>;
-  signOut: () => Promise<LogoutResponseType | undefined>;
+  currentUser: Profile | undefined;
+  setCurrentUser: Dispatch<React.SetStateAction<Profile | undefined>>;
+  signUp: (user: SignUpPayload) => Promise<FetchResponse | undefined>;
+  signIn: (user: SignInPayload) => Promise<FetchResponse | undefined>;
+  signOut: () => Promise<void>;
   authenticateUser: () => boolean;
 };
 
 const SessionContext = createContext<SessionContextProps>({
   currentUser: undefined,
+  setCurrentUser: () => {},
   signUp: async () => undefined,
   signIn: async () => undefined,
-  signOut: async () => undefined,
+  signOut: async () => {},
   authenticateUser: () => true,
 });
 
 export const SessionProvider = ({ children }) => {
   const routers = useRouter();
 
-  const [currentUser, setCurrentUser] = useState<UserType | undefined>(
+  const [currentUser, setCurrentUser] = useState<Profile | undefined>(
     undefined,
   );
 
-  useEffect(() => {
-    const fetchCurrentUser = async () => {
-      const session = await UserManagerService.currentUser();
-      setCurrentUser(session);
-    };
-
-    fetchCurrentUser();
-  }, []);
-
-  const signUp = async (user: RegisterUserType) => {
-    const response = await UserManagerService.signUp(user);
-    return response;
+  const signUp = async (
+    signUpPayload: SignUpPayload,
+  ): Promise<FetchResponse> => {
+    try {
+      const response = await fetchWrapper(
+        'https://develop-api.bookstore.dwarvesf.com/api/v1/auth/signup',
+        'POST',
+        signUpPayload,
+      );
+      return response;
+    } catch (error) {
+      throw new Error(error);
+    }
   };
 
-  const signIn = async (user: UserType) => {
-    const response = await UserManagerService.signIn(user);
-    setCurrentUser(response.data);
-    return response;
+  const signIn = async (
+    signInPayload: SignInPayload,
+  ): Promise<FetchResponse> => {
+    try {
+      const response = await fetchWrapper(
+        'https://develop-api.bookstore.dwarvesf.com/api/v1/auth/login',
+        'POST',
+        signInPayload,
+      );
+      if (response.success) {
+        const signInResponse = response as SignInResponse;
+        setCookie('bearerToken', signInResponse.data.accessToken || '', 7);
+      }
+      return response;
+    } catch (error) {
+      throw new Error(error);
+    }
   };
 
   const signOut = async () => {
-    const response = await UserManagerService.signOut();
-    if (response.status) {
-      setCurrentUser(undefined);
-    }
-    return response;
+    clearCookie('bearerToken');
+    setCurrentUser(undefined);
   };
 
   const authenticateUser = () => {
@@ -71,6 +85,7 @@ export const SessionProvider = ({ children }) => {
   const useSessionContext = useMemo<SessionContextProps>(
     () => ({
       currentUser,
+      setCurrentUser,
       signUp,
       signIn,
       signOut,

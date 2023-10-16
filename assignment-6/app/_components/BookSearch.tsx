@@ -8,23 +8,23 @@ export const BookSearch = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams()!;
 
-  const getStoredSearchTerm = () => {
+  const getStoredSearchQuery = () => {
     if (typeof localStorage === 'undefined') return '';
-    return localStorage.getItem('searchTerm') || '';
+    return localStorage.getItem('query') || '';
   };
 
-  const setStoredSearchTerm = (value) => {
+  const setStoredSearchQuery = (value) => {
     if (typeof localStorage === 'undefined') return;
-    localStorage.setItem('searchTerm', value);
+    localStorage.setItem('query', value);
   };
 
-  const initialTerm = searchParams?.get('term') || getStoredSearchTerm();
-  const [term, setTerm] = useState(initialTerm);
+  const initialQuery = searchParams?.get('query') || getStoredSearchQuery();
+  const [query, setQuery] = useState(initialQuery);
 
   const createQueryString = useCallback(
     (value: string) => {
       const params = new URLSearchParams(searchParams);
-      params.set('term', value);
+      params.set('query', value);
       params.set('page', '1');
       return params.toString();
     },
@@ -32,14 +32,14 @@ export const BookSearch = () => {
   );
 
   const handleSearch = useCallback(() => {
-    router.push(`${pathname}?${createQueryString(term)}`);
+    router.push(`${pathname}?${createQueryString(query)}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [term]);
+  }, [query]);
 
   useEffect(() => {
-    setStoredSearchTerm(term);
+    setStoredSearchQuery(query);
     handleSearch();
-  }, [handleSearch, term]);
+  }, [handleSearch, query]);
 
   return (
     <form className="flex items-center">
@@ -65,9 +65,9 @@ export const BookSearch = () => {
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
           placeholder="Search"
           onChange={(e) => {
-            setTerm(e.target.value);
+            setQuery(e.target.value);
           }}
-          value={term}
+          value={query}
           required
         />
       </div>

@@ -4,7 +4,7 @@ import Pagination from './common/Pagination';
 import { useBooksContext } from '../_contexts/BooksContext';
 
 export const BookTableFooter = () => {
-  const { page, perPage, total, totalPages } = useBooksContext().paging;
+  const { page, pageSize, totalRecords, totalPages } = useBooksContext().paging;
 
   const pathname = usePathname();
   const searchParams = useSearchParams()!;
@@ -39,14 +39,14 @@ export const BookTableFooter = () => {
       <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
         Showing&nbsp;
         <span className="font-semibold text-gray-900 dark:text-white">
-          {`${Math.min((page - 1) * perPage + 1, total)} - ${Math.min(
-            page * perPage,
-            total,
+          {`${Math.min((page - 1) * pageSize + 1, totalRecords)} - ${Math.min(
+            page * pageSize,
+            totalRecords,
           )}`}
         </span>
         &nbsp;of&nbsp;
         <span className="font-semibold text-gray-900 dark:text-white">
-          {total}
+          {totalRecords}
         </span>
       </span>
       <Pagination

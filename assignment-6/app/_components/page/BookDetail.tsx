@@ -1,45 +1,46 @@
 'use client';
 
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import { useRouter } from 'next/navigation';
+import useSWR from 'swr';
 import { useBookContext } from '../../_contexts/BookContext';
 import { useDeleteBookContext } from '../../_contexts/DeleteBookContext';
 import CustomNotFound from '../../not-found';
 import { BtnBack } from '../common/BtnBack';
 import { ConfirmDeleteDialog } from '../ConfirmDeleteDialog';
-import { useApplicationContext } from '../../_contexts/ApplicationContext';
+import { Book } from '../../_types';
+import { fetchWrapper } from '../../_services/common/fetchWrapper';
+import Loading from '../../loading';
 
 interface BookProps {
   id: string;
 }
 export const BookDetail: FC<BookProps> = ({ id }) => {
-  const { showLoading, hideLoading } = useApplicationContext();
-  const { currentBook, initBook } = useBookContext();
+  const router = useRouter();
+  const { currentBook, setCurrentBook } = useBookContext();
   const { showDeleteConfirm } = useDeleteBookContext();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      showLoading();
-      await initBook(id);
-    };
-    fetchData();
-    hideLoading();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const fetcher = (url: string) => fetchWrapper(url, 'GET');
 
-  const router = useRouter();
+  const { data, isLoading } = useSWR(
+    `https://develop-api.bookstore.dwarvesf.com/api/v1/books/${id}`,
+    fetcher,
+  );
+
+  if (isLoading) return <Loading text="Book" />;
+  if (data?.success) setCurrentBook(data.data as Book);
+  if (currentBook === undefined) return <CustomNotFound />;
 
   const triggerSubmit = () => {
     router.replace('/');
   };
 
-  if (currentBook === undefined) return <CustomNotFound />;
   return (
     <section className="bg-white dark:bg-gray-800 px-4 py-4">
       <ConfirmDeleteDialog triggerSubmit={triggerSubmit} />
       <BtnBack />
       <div className="flex flex-col gap-8 mb-8">
-        <h2 className="font-bold text-2xl">{currentBook.title}</h2>
+        <h2 className="font-bold text-2xl">{currentBook.name}</h2>
         <div className="flex flex-col gap-2">
           <p>
             <strong>Author:&#32;</strong>
@@ -47,7 +48,7 @@ export const BookDetail: FC<BookProps> = ({ id }) => {
           </p>
           <p>
             <strong>Topic:&#32;</strong>
-            {currentBook.topic}
+            {currentBook.topic.name}
           </p>
         </div>
       </div>

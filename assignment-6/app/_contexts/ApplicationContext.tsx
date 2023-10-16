@@ -1,14 +1,20 @@
 'use client';
 
-import { createContext, useContext, useMemo, useState, useEffect } from 'react';
+import {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+  useEffect,
+  Dispatch,
+} from 'react';
 import { ToasterType } from '../_types';
 
 type ApplicationContextProps = {
   theme: string;
   toggleTheme: () => void;
   loading: boolean;
-  showLoading: () => void;
-  hideLoading: () => void;
+  setLoading: Dispatch<React.SetStateAction<boolean>>;
   toaster: ToasterType | undefined;
   toasterSuccess: (message: string) => void;
   toasterError: (message: string) => void;
@@ -19,8 +25,7 @@ const ApplicationContext = createContext<ApplicationContextProps>({
   theme: 'light',
   toggleTheme: () => {},
   loading: false,
-  showLoading: () => {},
-  hideLoading: () => {},
+  setLoading: () => {},
   toaster: undefined,
   toasterSuccess: () => {},
   toasterError: () => {},
@@ -98,22 +103,13 @@ export const ApplicationProvider = ({ children }) => {
     setToaster(undefined);
   };
 
-  const showLoading = () => {
-    setLoading(true);
-  };
-
-  const hideLoading = () => {
-    setLoading(false);
-  };
-
   const useApplicationContext = useMemo<ApplicationContextProps>(
     () => ({
       theme,
       toggleTheme,
       clearToaster,
       loading,
-      showLoading,
-      hideLoading,
+      setLoading,
       toaster,
       toasterSuccess,
       toasterError,

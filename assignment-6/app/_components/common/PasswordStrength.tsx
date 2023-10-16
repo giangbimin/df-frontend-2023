@@ -1,7 +1,7 @@
 import {
   checkPasswordStrength,
   passwordStrengthColor,
-} from '../../_services/common/PasswordStrengthService';
+} from '../../_services/utils/PasswordStrengthUtils';
 
 export const PasswordStrength = ({ password }: { password: string }) => {
   const level = checkPasswordStrength(password);

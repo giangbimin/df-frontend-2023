@@ -4,31 +4,43 @@ import Link from 'next/link';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { LoginSchema, LoginSchemaType } from '../_types';
-import { useSessionContext } from '../_contexts/SessionContext';
-import { ErrorMessage } from '../_components/common/ErrorMessage';
-import { useApplicationContext } from '../_contexts/ApplicationContext';
+import { LoginSchema, LoginSchemaType } from '../../_types';
+import { useSessionContext } from '../../_contexts/SessionContext';
+import { ErrorMessage } from '../../_components/common/ErrorMessage';
+import { useApplicationContext } from '../../_contexts/ApplicationContext';
+import { ErrorResponse } from '../../_types/api/request.d';
 
 export default function LoginPage() {
   const routes = useRouter();
+
   const { toasterError, toasterSuccess } = useApplicationContext();
+
   const { signIn } = useSessionContext();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginSchemaType>({ resolver: zodResolver(LoginSchema) });
 
-  const onSubmit: SubmitHandler<LoginSchemaType> = async (data) => {
-    const response = await signIn({
-      email: data.email,
-      password: data.password,
-    });
-    if (response?.status) {
-      toasterSuccess(response.message);
-      routes.replace('/');
-    } else {
-      toasterError(response?.message || ' Error signIn');
+  const onSubmit: SubmitHandler<LoginSchemaType> = async (data, e) => {
+    if (e) e.preventDefault();
+    try {
+      const response = await signIn({
+        email: data.email,
+        password: data.password,
+      });
+      if (response !== undefined) {
+        if (response.success) {
+          toasterSuccess('sign in success');
+          routes.push('/');
+        } else {
+          const errorResponse = response.data as ErrorResponse;
+          toasterError(errorResponse.message || 'An error occurred');
+        }
+      }
+    } catch (error) {
+      toasterError(error || 'An error occurred');
     }
   };
 
@@ -46,7 +58,10 @@ export default function LoginPage() {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Sign in to your account
             </h1>
-            <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            <form
+              className="space-y-6"
+              onSubmit={(e) => handleSubmit(onSubmit)(e)}
+            >
               <label
                 htmlFor="email"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -57,6 +72,7 @@ export default function LoginPage() {
                 <ErrorMessage error={errors.email} />
                 <input
                   {...register('email')}
+                  autoComplete="username"
                   type="email"
                   name="email"
                   id="email"
@@ -75,6 +91,7 @@ export default function LoginPage() {
                 <ErrorMessage error={errors.password} />
                 <input
                   {...register('password')}
+                  autoComplete="current-password"
                   type="password"
                   name="password"
                   id="password"

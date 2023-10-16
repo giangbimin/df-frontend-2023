@@ -1,46 +1,51 @@
 'use client';
 
-import { createContext, useContext, useMemo, useState } from 'react';
-import { BookResponseType, BookType } from '../_types';
-import BookManagerService from '../_services/BookManagerService';
+import {
+  Dispatch,
+  SetStateAction,
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+} from 'react';
+import { fetchWrapper } from '../_services/common/fetchWrapper';
+import {
+  Book,
+  BookPayload,
+  FetchResponse,
+  defaultFetchResponse,
+} from '../_types';
 
 type BookContextProps = {
-  currentBook: BookType | undefined;
-  initBook: (id: string) => Promise<void>;
-  updateBook: (book: BookType) => Promise<BookResponseType | undefined>;
+  currentBook: Book | undefined;
+  setCurrentBook: Dispatch<SetStateAction<Book | undefined>>;
+  updateBook: (id: string, bookPayload: BookPayload) => Promise<FetchResponse>;
 };
 
 const BookContext = createContext<BookContextProps>({
   currentBook: undefined,
-  initBook: async () => {},
-  updateBook: async () => undefined,
+  setCurrentBook: () => {},
+  updateBook: async () => defaultFetchResponse,
 });
 
 export const BookProvider = ({ children }) => {
-  const [currentBook, setCurrentBook] = useState<BookType | undefined>(
-    undefined,
-  );
+  const [currentBook, setCurrentBook] = useState<Book | undefined>(undefined);
 
-  const initBook = async (id: string) => {
-    try {
-      const response = await BookManagerService.find(id);
-      if (response.status) setCurrentBook(response.data);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error);
-    }
-  };
+  const updateBook = async (id: string, bookPayload: BookPayload) => {
+    const response = await fetchWrapper(
+      `https://develop-api.bookstore.dwarvesf.com/api/v1/books/${id}`,
+      'PUT',
+      bookPayload,
+    );
 
-  const updateBook = async (book: BookType) => {
-    const response = await BookManagerService.update(book);
-    if (response.status) setCurrentBook(response.data);
+    if (response.success) setCurrentBook(response.data as Book);
     return response;
   };
 
   const useBookContext = useMemo<BookContextProps>(
     () => ({
       currentBook,
-      initBook,
+      setCurrentBook,
       updateBook,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps

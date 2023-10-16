@@ -1,32 +1,27 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useApplicationContext } from '../_contexts/ApplicationContext';
 import { useBooksContext } from '../_contexts/BooksContext';
-import { useSessionContext } from '../_contexts/SessionContext';
-import { BookType, defaultBook } from '../_types';
+import { BookPayload, defaultBookPayload, ErrorResponse } from '../_types';
 import { BookForm } from './BookForm';
 
 export const CreateBookPopup = () => {
+  const routes = useRouter();
   const { toasterSuccess, toasterError } = useApplicationContext();
-  const { authenticateUser } = useSessionContext();
-  const { isShowCreateForm, hideCreateForm, createBook, refresh } =
-    useBooksContext();
+  const { isShowCreateForm, hideCreateForm, createBook } = useBooksContext();
 
   if (!isShowCreateForm) return null;
 
-  const onSubmitCreateBook = async (book: BookType) => {
-    const isLogin = authenticateUser();
-    if (!isLogin) {
-      toasterError('require Login!');
-      return;
-    }
-    const response = await createBook(book);
-    if (response?.status) {
-      toasterSuccess(response.message);
-      refresh();
+  const onSubmitCreateBook = async (bookPayload: BookPayload) => {
+    const response = await createBook(bookPayload);
+    if (response.success) {
+      toasterSuccess('Create Success');
       hideCreateForm();
+      routes.refresh();
     } else {
-      toasterError(response?.message || 'Create False');
+      const errorResponse = response.data as ErrorResponse;
+      toasterError(errorResponse.message || 'Create False');
     }
   };
 
@@ -66,7 +61,7 @@ export const CreateBookPopup = () => {
               Add Book
             </h3>
             <BookForm
-              book={defaultBook}
+              bookPayload={defaultBookPayload}
               onSubmit={onSubmitCreateBook}
               disableEdit={false}
             />
