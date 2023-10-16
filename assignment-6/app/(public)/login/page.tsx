@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { useState } from 'react';
 import { LoginSchema, LoginSchemaType } from '../../_types';
 import { useAuthContext } from '../../_contexts/AuthContext';
@@ -13,8 +13,6 @@ import { ErrorResponse } from '../../_types/api/request.d';
 import Loading from '../../loading';
 
 export default function LoginPage() {
-  const routes = useRouter();
-
   const { toasterError, toasterSuccess } = useApplicationContext();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -36,7 +34,7 @@ export default function LoginPage() {
       });
       if (response.success) {
         toasterSuccess('sign in success');
-        routes.replace('/books');
+        redirect('/books');
       } else {
         const errorResponse = response.data as ErrorResponse;
         toasterError(errorResponse.message || 'An error occurred');

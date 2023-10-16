@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import useSWR from 'swr';
 import { ReactNode, useEffect } from 'react';
 import Loading from '../loading';
@@ -10,7 +10,6 @@ import { fetchWrapper } from '../_services/common/fetchWrapper';
 import Layout from '../_components/Layout';
 
 export default function SecureLayout({ children }: { children: ReactNode }) {
-  const routers = useRouter();
   const fetcher = (url: string) => fetchWrapper(url, 'GET');
   const { data, isLoading } = useSWR(
     'https://develop-api.bookstore.dwarvesf.com/api/v1/me',
@@ -23,7 +22,7 @@ export default function SecureLayout({ children }: { children: ReactNode }) {
   );
 
   useEffect(() => {
-    if (!isLoading && data?.status === 401) routers.push('/login');
+    if (!isLoading && data?.status === 401) redirect('/login');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
