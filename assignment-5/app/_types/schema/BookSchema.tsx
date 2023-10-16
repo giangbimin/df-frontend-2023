@@ -11,14 +11,12 @@ export const BookSchema = z.object({
     .min(1, 'Author is required')
     .max(20, 'Author must have less than 20 letters')
     .refine((author) => /^[A-Za-z ]+$/.test(author), {
-      path: ['author'],
       message: 'Author name can only contain letters and spaces',
     }),
   topic: z
     .string()
     .min(1, 'Topic is required')
     .refine((topic) => validTopics.includes(topic), {
-      path: ['topic'],
       message: 'Must select from available options',
     }),
 });
