@@ -4,12 +4,10 @@ import Link from 'next/link';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
 import { ErrorMessage } from '../../_components/common/ErrorMessage';
 import { SignUpSchemaType, SignUpSchema, ErrorResponse } from '../../_types';
 import { useAuthContext } from '../../_contexts/AuthContext';
 import { useApplicationContext } from '../../_contexts/ApplicationContext';
-import Loading from '../../loading';
 
 export default function RegisterPage() {
   const routes = useRouter();
@@ -24,11 +22,9 @@ export default function RegisterPage() {
     resolver: zodResolver(SignUpSchema),
   });
 
-  const [loading, setLoading] = useState<boolean>(false);
   const onSubmit: SubmitHandler<SignUpSchemaType> = async (data, e) => {
     if (e) e.preventDefault();
     try {
-      setLoading(true);
       const response = await signUp({
         avatar: data.avatar,
         email: data.email,
@@ -45,10 +41,8 @@ export default function RegisterPage() {
     } catch (error) {
       toasterError(error);
     }
-    setLoading(false);
   };
 
-  if (loading) return <Loading text="Register" />;
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center px-6 mx-auto md:h-screen">
@@ -83,6 +77,7 @@ export default function RegisterPage() {
                   id="email"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="name@company.com"
+                  readOnly={isSubmitting}
                   required
                 />
               </label>
@@ -100,6 +95,7 @@ export default function RegisterPage() {
                   name="avatar"
                   id="avatar"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  readOnly={isSubmitting}
                   required
                 />
               </label>
@@ -118,6 +114,7 @@ export default function RegisterPage() {
                   name="fullName"
                   id="fullName"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  readOnly={isSubmitting}
                   required
                 />
               </label>
@@ -137,6 +134,7 @@ export default function RegisterPage() {
                   id="password"
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  readOnly={isSubmitting}
                   required
                 />
               </label>
@@ -145,7 +143,7 @@ export default function RegisterPage() {
                 disabled={isSubmitting}
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 my-7 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
-                Sign up
+                {isSubmitting ? 'Submitting' : 'Sign up'}
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Already have account

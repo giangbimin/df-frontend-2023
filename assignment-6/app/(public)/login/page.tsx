@@ -3,38 +3,35 @@
 import Link from 'next/link';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { redirect } from 'next/navigation';
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { LoginSchema, LoginSchemaType } from '../../_types';
 import { useAuthContext } from '../../_contexts/AuthContext';
 import { ErrorMessage } from '../../_components/common/ErrorMessage';
 import { useApplicationContext } from '../../_contexts/ApplicationContext';
 import { ErrorResponse } from '../../_types/api/request.d';
-import Loading from '../../loading';
 
 export default function LoginPage() {
+  const routers = useRouter();
   const { toasterError, toasterSuccess } = useApplicationContext();
-  const [loading, setLoading] = useState<boolean>(false);
 
   const { signIn } = useAuthContext();
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginSchemaType>({ resolver: zodResolver(LoginSchema) });
 
   const onSubmit: SubmitHandler<LoginSchemaType> = async (data, e) => {
     if (e) e.preventDefault();
     try {
-      setLoading(true);
       const response = await signIn({
         email: data.email,
         password: data.password,
       });
       if (response.success) {
         toasterSuccess('sign in success');
-        redirect('/books');
+        routers.push('/books');
       } else {
         const errorResponse = response.data as ErrorResponse;
         toasterError(errorResponse.message || 'An error occurred');
@@ -42,10 +39,7 @@ export default function LoginPage() {
     } catch (error) {
       toasterError(error || 'An error occurred');
     }
-    setLoading(false);
   };
-
-  if (loading) return <Loading text="Login" />;
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
@@ -81,6 +75,7 @@ export default function LoginPage() {
                   id="email"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="name@company.com"
+                  readOnly={isSubmitting}
                   required
                 />
               </label>
@@ -100,15 +95,16 @@ export default function LoginPage() {
                   id="password"
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  readOnly={isSubmitting}
                   required
                 />
               </label>
               <button
                 type="submit"
-                disabled={loading}
+                disabled={isSubmitting}
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 my-7 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
-                Sign in
+                {isSubmitting ? 'Loading' : 'Sign in'}
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 Don’t have an account yet?

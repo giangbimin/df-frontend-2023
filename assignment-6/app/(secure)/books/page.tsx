@@ -12,10 +12,15 @@ import BookTableFooter from '../../_components/BookTableFooter';
 export default function BooksPage() {
   const searchParams = useSearchParams();
 
+  const getStoredQuery = () => {
+    if (typeof localStorage === 'undefined') return '';
+    return localStorage.getItem('query') || '';
+  };
+
   const parsedPage = parseInt(searchParams?.get('page') ?? '1', 10) || 1;
   const parsedPageSize =
     parseInt(searchParams?.get('pageSize') ?? '5', 10) || 5;
-  const parsedQuery = searchParams?.get('query') || '';
+  const parsedQuery = searchParams?.get('query') || getStoredQuery();
   const searchCondition: ListBookPayload = {
     page: parsedPage,
     query: parsedQuery,
@@ -36,7 +41,7 @@ export default function BooksPage() {
 
   const { data, isLoading } = useSWR(reqKey, fetcher, {
     revalidateIfStale: true,
-    revalidateOnFocus: true,
+    revalidateOnFocus: false,
     revalidateOnReconnect: true,
   });
 
