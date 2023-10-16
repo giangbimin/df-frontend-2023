@@ -1,10 +1,5 @@
-import { BookList } from './_components/page/BookList';
-import { BooksProvider } from './_contexts/BooksContext';
+import Loading from './loading';
 
 export default function HomePage() {
-  return (
-    <BooksProvider>
-      <BookList />
-    </BooksProvider>
-  );
+  return <Loading text="Welcome" />;
 }

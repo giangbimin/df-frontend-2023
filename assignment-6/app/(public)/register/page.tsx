@@ -4,16 +4,17 @@ import Link from 'next/link';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { ErrorMessage } from '../../_components/common/ErrorMessage';
-import { SignUpSchemaType, SignUpSchema } from '../../_types';
-import { ErrorResponse } from '../../_types/api/request.d';
-import { useSessionContext } from '../../_contexts/SessionContext';
+import { SignUpSchemaType, SignUpSchema, ErrorResponse } from '../../_types';
+import { useAuthContext } from '../../_contexts/AuthContext';
 import { useApplicationContext } from '../../_contexts/ApplicationContext';
+import Loading from '../../loading';
 
 export default function RegisterPage() {
   const routes = useRouter();
   const { toasterError, toasterSuccess } = useApplicationContext();
-  const { signUp } = useSessionContext();
+  const { signUp } = useAuthContext();
 
   const {
     register,
@@ -23,28 +24,31 @@ export default function RegisterPage() {
     resolver: zodResolver(SignUpSchema),
   });
 
-  const onSubmit: SubmitHandler<SignUpSchemaType> = async (data) => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const onSubmit: SubmitHandler<SignUpSchemaType> = async (data, e) => {
+    if (e) e.preventDefault();
     try {
+      setLoading(true);
       const response = await signUp({
         avatar: data.avatar,
         email: data.email,
         fullName: data.fullName,
         password: data.password,
       });
-      if (response !== undefined) {
-        if (response.success) {
-          toasterSuccess('sign up success');
-          routes.push('/login');
-        } else {
-          const errorResponse = response.data as ErrorResponse;
-          toasterError(errorResponse.message || 'sign up false');
-        }
+      if (response.success) {
+        toasterSuccess('sign up success');
+        routes.push('/login');
+      } else {
+        const errorResponse = response.data as ErrorResponse;
+        toasterError(errorResponse.message || 'sign up false');
       }
     } catch (error) {
       toasterError(error);
     }
+    setLoading(false);
   };
 
+  if (loading) return <Loading text="Register" />;
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center px-6 mx-auto md:h-screen">
@@ -59,7 +63,10 @@ export default function RegisterPage() {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Sign up to your account
             </h1>
-            <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+            <form
+              className="space-y-6"
+              onSubmit={(e) => handleSubmit(onSubmit)(e)}
+            >
               <label
                 htmlFor="email"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
@@ -106,6 +113,7 @@ export default function RegisterPage() {
                 <ErrorMessage error={errors.fullName} />
                 <input
                   {...register('fullName')}
+                  autoComplete="username"
                   type="text"
                   name="fullName"
                   id="fullName"

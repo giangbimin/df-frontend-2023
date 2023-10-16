@@ -1,45 +1,49 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { FC, useCallback, useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { ListBookPayload } from '../_types';
 
-export const BookSearch = () => {
+type BookSearchProps = {
+  searchCondition: ListBookPayload;
+};
+
+export const BookSearch: FC<BookSearchProps> = ({ searchCondition }) => {
   const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams()!;
 
   const getStoredSearchQuery = () => {
     if (typeof localStorage === 'undefined') return '';
     return localStorage.getItem('query') || '';
   };
 
-  const setStoredSearchQuery = (value) => {
-    if (typeof localStorage === 'undefined') return;
-    localStorage.setItem('query', value);
-  };
-
-  const initialQuery = searchParams?.get('query') || getStoredSearchQuery();
-  const [query, setQuery] = useState(initialQuery);
-
-  const createQueryString = useCallback(
-    (value: string) => {
-      const params = new URLSearchParams(searchParams);
-      params.set('query', value);
-      params.set('page', '1');
-      return params.toString();
-    },
-    [searchParams],
+  const storedQuery = getStoredSearchQuery();
+  const isNewSearch = searchCondition.query === '' && storedQuery !== '';
+  const [query, setQuery] = useState(
+    isNewSearch ? storedQuery : searchCondition.query,
   );
 
+  const setStoredSearchQuery = () => {
+    if (typeof localStorage === 'undefined') return;
+    localStorage.setItem('query', query);
+  };
+
   const handleSearch = useCallback(() => {
-    router.push(`${pathname}?${createQueryString(query)}`);
+    const newParams = { ...searchCondition, query, page: 1 };
+    const queryParams = Object.keys(newParams)
+      .map(
+        (key) =>
+          `${encodeURIComponent(key)}=${encodeURIComponent(newParams[key])}`,
+      )
+      .join('&');
+    router.replace(`/books?${queryParams}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
 
   useEffect(() => {
-    setStoredSearchQuery(query);
+    setStoredSearchQuery();
     handleSearch();
-  }, [handleSearch, query]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
 
   return (
     <form className="flex items-center">
@@ -64,11 +68,11 @@ export const BookSearch = () => {
           id="simple-search"
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
           placeholder="Search"
+          autoFocus
           onChange={(e) => {
             setQuery(e.target.value);
           }}
           value={query}
-          required
         />
       </div>
     </form>

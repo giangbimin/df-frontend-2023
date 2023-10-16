@@ -1,10 +1,14 @@
 import { usePathname, useSearchParams } from 'next/navigation';
-import { useCallback } from 'react';
+import { FC, useCallback } from 'react';
 import Pagination from './common/Pagination';
-import { useBooksContext } from '../_contexts/BooksContext';
+import { Metadata } from '../_types';
 
-export const BookTableFooter = () => {
-  const { page, pageSize, totalRecords, totalPages } = useBooksContext().paging;
+type BookPagingProps = {
+  metadata: Metadata;
+};
+
+const BookTableFooter: FC<BookPagingProps> = ({ metadata }) => {
+  const { page, pageSize, totalRecords, totalPages } = metadata;
 
   const pathname = usePathname();
   const searchParams = useSearchParams()!;
@@ -58,3 +62,5 @@ export const BookTableFooter = () => {
     </nav>
   );
 };
+
+export default BookTableFooter;

@@ -4,18 +4,21 @@ import Link from 'next/link';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { LoginSchema, LoginSchemaType } from '../../_types';
-import { useSessionContext } from '../../_contexts/SessionContext';
+import { useAuthContext } from '../../_contexts/AuthContext';
 import { ErrorMessage } from '../../_components/common/ErrorMessage';
 import { useApplicationContext } from '../../_contexts/ApplicationContext';
 import { ErrorResponse } from '../../_types/api/request.d';
+import Loading from '../../loading';
 
 export default function LoginPage() {
   const routes = useRouter();
 
   const { toasterError, toasterSuccess } = useApplicationContext();
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const { signIn } = useSessionContext();
+  const { signIn } = useAuthContext();
 
   const {
     register,
@@ -26,23 +29,25 @@ export default function LoginPage() {
   const onSubmit: SubmitHandler<LoginSchemaType> = async (data, e) => {
     if (e) e.preventDefault();
     try {
+      setLoading(true);
       const response = await signIn({
         email: data.email,
         password: data.password,
       });
-      if (response !== undefined) {
-        if (response.success) {
-          toasterSuccess('sign in success');
-          routes.push('/');
-        } else {
-          const errorResponse = response.data as ErrorResponse;
-          toasterError(errorResponse.message || 'An error occurred');
-        }
+      if (response.success) {
+        toasterSuccess('sign in success');
+        routes.replace('/books');
+      } else {
+        const errorResponse = response.data as ErrorResponse;
+        toasterError(errorResponse.message || 'An error occurred');
       }
     } catch (error) {
       toasterError(error || 'An error occurred');
     }
+    setLoading(false);
   };
+
+  if (loading) return <Loading text="Login" />;
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
@@ -102,6 +107,7 @@ export default function LoginPage() {
               </label>
               <button
                 type="submit"
+                disabled={loading}
                 className="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 my-7 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
               >
                 Sign in

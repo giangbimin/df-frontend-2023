@@ -22,4 +22,10 @@ interface SignUpPayload {
 
 type SignUpResponse = SuccessMessageResponse;
 
-export type { SignInPayload, SignInResponse, SignUpPayload, SignUpResponse };
+export type {
+  SignInPayload,
+  SignInResponseData,
+  SignInResponse,
+  SignUpPayload,
+  SignUpResponse,
+};

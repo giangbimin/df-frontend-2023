@@ -24,7 +24,7 @@ interface ListBookPayload {
   page?: number;
   pageSize?: number;
   sort?: string;
-  query?: string;
+  query: string;
   TopicID?: number;
 }
 

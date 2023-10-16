@@ -4,8 +4,6 @@ import { Inter } from 'next/font/google';
 import { Suspense } from 'react';
 import Loading from './loading';
 import { ApplicationProvider } from './_contexts/ApplicationContext';
-import { SessionProvider } from './_contexts/SessionContext';
-import Layout from './_components/Layout';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -23,11 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <Suspense fallback={<Loading text="Book Store" />}>
-          <ApplicationProvider>
-            <SessionProvider>
-              <Layout> {children} </Layout>
-            </SessionProvider>
-          </ApplicationProvider>
+          <ApplicationProvider>{children}</ApplicationProvider>
         </Suspense>
       </body>
     </html>
