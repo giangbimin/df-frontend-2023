@@ -8,16 +8,19 @@ export const SignUpSchema = z
       .min(1, 'Password is required')
       .min(8, 'Password must have at least 8 characters')
       .max(20, 'Password must have less than 20 letters')
+      .refine((password) => /[a-z]/.test(password), {
+        message: 'Password must contain at least 1 lower letter',
+      })
       .refine((password) => /[A-Z]/.test(password), {
-        path: ['password'],
         message: 'Password must contain at least 1 uppercase letter',
       })
+      .refine((password) => /[0-9]/.test(password), {
+        message: 'Password must contain at least 1 number',
+      })
       .refine(
-        // eslint-disable-next-line no-useless-escape
-        (password) => /[!@#$%^&*()_+|~\- =\[\]{};':"\\<>,./?]+/.test(password),
+        (password) => /[!@#$%^&*()_+|~\-=[\]{};:'"<>,./?]+/.test(password),
         {
-          path: ['password'],
-          message: 'Password must contain at least 1 symbol',
+          message: 'Password must contain at least 1 special character',
         },
       ),
     passwordConfirmation: z
