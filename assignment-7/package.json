@@ -2,7 +2,7 @@
   "name": "assignment-7",
   "version": "0.1.0",
   "private": true,
-  "description": "DF 2023 Assignment 6",
+  "description": "DF 2023 Assignment 7",
   "author": "Dwarves Foundation",
   "repository": {
     "type": "git",
@@ -15,7 +15,8 @@
     "lint": "eslint app --ext .js,.jsx,.ts,.tsx",
     "format": "prettier --write \"app/**/*.{js,jsx,ts,tsx}\"",
     "preinstall": "npx only-allow pnpm",
-    "postinstall": "cd .. && husky install assignment-6/.husky"
+    "postinstall": "cd .. && husky install assignment-7/.husky",
+    "generate:api": "orval --config ./orval.config.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.1",
