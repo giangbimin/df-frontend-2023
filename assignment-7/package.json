@@ -12,8 +12,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint app --ext .js,.jsx,.ts,.tsx",
-    "format": "prettier --write \"app/**/*.{js,jsx,ts,tsx}\"",
+    "lint": "eslint src --ext .js,.jsx,.ts,.tsx",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx}\"",
     "preinstall": "npx only-allow pnpm",
     "postinstall": "cd .. && husky install assignment-7/.husky",
     "generate:api": "orval --config ./orval.config.js"
