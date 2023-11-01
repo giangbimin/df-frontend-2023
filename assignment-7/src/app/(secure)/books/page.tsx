@@ -30,7 +30,9 @@ export default function BooksPage() {
     totalPages: 1,
     totalRecords: 0,
   };
-  const { data, isLoading } = useGetBooks(searchCondition);
+  const { data, isLoading } = useGetBooks(searchCondition, {
+    swr: { swrKey: `/books?page=${searchCondition.page}`, enabled: true },
+  });
   const books = data?.data || [];
   const metadata = data?.metadata || defaultMetadata;
 

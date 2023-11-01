@@ -9,13 +9,7 @@ import {
   useContext,
 } from 'react';
 
-import {
-  checkLogin,
-  cleanSession,
-  getUser,
-  saveToken,
-  saveUser,
-} from 'app/_services/LocalStorageManager';
+import LocalStorageManager from 'api/mutator/LocalStorageManager';
 import { useParams } from 'next/navigation';
 import {
   Auth,
@@ -45,6 +39,9 @@ const SessionContext = createContext<SessionContextValues>({
 
 export const SessionProvider = ({ children }: { children: ReactNode }) => {
   const params = useParams();
+  const localStorageManager = LocalStorageManager();
+  const { checkLogin, saveToken, cleanSession, getUser, saveUser } =
+    localStorageManager;
   const [isLogin, setIsLogin] = useState<boolean>(checkLogin());
   const [currentUser, setCurrentUser] = useState<Me | undefined>(undefined);
 
@@ -77,20 +74,17 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const findUser = async () => {
-    console.log('findUser');
     const userRaw = getUser();
     if (userRaw) {
       const user = JSON.parse(userRaw) as Me;
-      console.log('User from local storage:', user);
       setCurrentUser(user);
       return;
     }
     try {
       const { data } = await getMe();
-      console.log('User from API:', data);
       if (data) {
         setCurrentUser(data);
-        saveUser(data);
+        saveUser(JSON.stringify(data));
       }
     } catch {
       setIsLogin(false);

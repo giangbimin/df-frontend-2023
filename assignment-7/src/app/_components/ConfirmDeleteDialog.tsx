@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import toast from 'react-hot-toast';
+import { useSWRConfig } from 'swr';
 import { useDeleteBookContext } from '../_contexts/DeleteBookContext';
 import { Dialog } from './common/Dialog';
 
@@ -8,6 +9,7 @@ interface DialogProps {
 }
 
 export const ConfirmDeleteDialog: FC<DialogProps> = ({ triggerSubmit }) => {
+  const { mutate } = useSWRConfig();
   const { currentBook, isShowDeleteConfirm, removeBook, hideDeleteConfirm } =
     useDeleteBookContext();
   if (currentBook === undefined || isShowDeleteConfirm === false) return null;
@@ -16,6 +18,7 @@ export const ConfirmDeleteDialog: FC<DialogProps> = ({ triggerSubmit }) => {
       await removeBook();
       toast('Delete Success!');
       hideDeleteConfirm();
+      mutate((key) => typeof key === 'string' && key.startsWith('/books'));
       if (triggerSubmit !== undefined) triggerSubmit();
     } catch {
       toast('Delete false!');

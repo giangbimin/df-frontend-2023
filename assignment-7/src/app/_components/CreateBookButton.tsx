@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { createBook } from 'api';
+import { useSWRConfig } from 'swr';
 import { BookForm } from './BookForm';
 
 export const CreateBookButton = () => {
+  const { mutate } = useSWRConfig();
   const [isShowCreateForm, setIsShowCreateForm] = useState<boolean>(false);
 
   const showCreateForm = () => {
@@ -23,6 +25,7 @@ export const CreateBookButton = () => {
     if (response) {
       toast('Create Success');
       hideCreateForm();
+      mutate((key) => typeof key === 'string' && key.startsWith('/books'));
     } else {
       toast('Create False');
     }
