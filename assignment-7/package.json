@@ -21,7 +21,6 @@
   "dependencies": {
     "@hookform/resolvers": "^3.3.1",
     "axios": "^1.6.0",
-    "husky": "^8.0.3",
     "lint-staged": "^14.0.1",
     "next": "^13.5.3",
     "react": "^18.2.0",
@@ -41,6 +40,7 @@
     "autoprefixer": "^10.4.16",
     "eslint": "^8.50.0",
     "eslint-config-next": "^13.5.3",
+    "husky": "^8.0.3",
     "orval": "^6.19.1",
     "postcss": "^8.4.30",
     "prettier": "^3.0.3",
