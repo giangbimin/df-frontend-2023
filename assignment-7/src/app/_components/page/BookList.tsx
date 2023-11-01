@@ -1,8 +1,8 @@
 import { FC } from 'react';
+import { Book } from 'api';
 import BookLine from '../BookLine';
 import { DeleteBookProvider } from '../../_contexts/DeleteBookContext';
 import { ConfirmDeleteDialog } from '../ConfirmDeleteDialog';
-import { Book } from '../../_types';
 
 interface BookListProps {
   books: Book[];

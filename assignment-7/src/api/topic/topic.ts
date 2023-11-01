@@ -5,20 +5,17 @@
  * This is a swagger for API.
  * OpenAPI spec version: 1.0
  */
-import axios from 'axios';
-import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import useSwr from 'swr';
 import type { Key, SWRConfiguration } from 'swr';
 import type { ErrorResponse, TopicsResponse } from '../model';
+import { requester } from '../mutator/requester';
 
 /**
  * Get all topics
  * @summary Get all topics
  */
-export const getTopics = (
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<TopicsResponse>> => {
-  return axios.get(`/topics`, options);
+export const getTopics = () => {
+  return requester<TopicsResponse>({ url: `/topics`, method: 'get' });
 };
 
 export const getGetTopicsKey = () => [`/topics`] as const;
@@ -26,24 +23,23 @@ export const getGetTopicsKey = () => [`/topics`] as const;
 export type GetTopicsQueryResult = NonNullable<
   Awaited<ReturnType<typeof getTopics>>
 >;
-export type GetTopicsQueryError = AxiosError<ErrorResponse>;
+export type GetTopicsQueryError = ErrorResponse;
 
 /**
  * @summary Get all topics
  */
-export const useGetTopics = <TError = AxiosError<ErrorResponse>>(options?: {
+export const useGetTopics = <TError = ErrorResponse>(options?: {
   swr?: SWRConfiguration<Awaited<ReturnType<typeof getTopics>>, TError> & {
     swrKey?: Key;
     enabled?: boolean;
   };
-  axios?: AxiosRequestConfig;
 }) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+  const { swr: swrOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
     swrOptions?.swrKey ?? (() => (isEnabled ? getGetTopicsKey() : null));
-  const swrFn = () => getTopics(axiosOptions);
+  const swrFn = () => getTopics();
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,

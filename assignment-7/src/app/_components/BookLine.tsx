@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { FC } from 'react';
+import { Book } from 'api';
 import { useDeleteBookContext } from '../_contexts/DeleteBookContext';
-import { Book } from '../_types';
 
 type BookLineProps = {
   book: Book;
@@ -23,7 +23,7 @@ const BookLine: FC<BookLineProps> = ({ book }) => {
         {book.author}
       </td>
       <td className="px-4 py-3 border-r dark:border-neutral-500">
-        {book.topic.name}
+        {book.topic?.name}
       </td>
       <td className="px-4 py-3 border-r dark:border-neutral-500 flex">
         <button

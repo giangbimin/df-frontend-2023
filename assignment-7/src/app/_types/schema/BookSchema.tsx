@@ -12,7 +12,7 @@ export const BookSchema = z.object({
     .refine((author) => /^[A-Za-z ]+$/.test(author), {
       message: 'Author name can only contain letters and spaces',
     }),
-  TopicID: z.number().min(1, 'Please select Topic'),
+  topicId: z.number().min(1, 'Please select Topic'),
 });
 
 export type BookSchemaType = z.infer<typeof BookSchema>;

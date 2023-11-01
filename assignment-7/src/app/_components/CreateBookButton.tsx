@@ -1,11 +1,9 @@
 import { useState } from 'react';
-import { BookPayload, ErrorResponse, defaultBookPayload } from '../_types';
+import toast from 'react-hot-toast';
+import { createBook } from 'api';
 import { BookForm } from './BookForm';
-import { fetchWrapper } from '../_services/common/fetchWrapper';
-import { useApplicationContext } from '../_contexts/ApplicationContext';
 
 export const CreateBookButton = () => {
-  const { toasterError, toasterSuccess } = useApplicationContext();
   const [isShowCreateForm, setIsShowCreateForm] = useState<boolean>(false);
 
   const showCreateForm = () => {
@@ -16,19 +14,17 @@ export const CreateBookButton = () => {
     setIsShowCreateForm(false);
   };
 
-  const onSubmitCreateBook = async (bookPayload: BookPayload) => {
-    const response = await fetchWrapper(
-      'https://develop-api.bookstore.dwarvesf.com/api/v1/books',
-      'POST',
-      bookPayload,
-    );
-    if (response.success) {
-      toasterSuccess('Create Success');
+  const onSubmit = async (name?: string, author?: string, topicId?: number) => {
+    const response = await createBook({
+      name: name || '',
+      author: author || '',
+      topicId: topicId || 0,
+    });
+    if (response) {
+      toast('Create Success');
       hideCreateForm();
-      window.location.reload();
     } else {
-      const errorResponse = response.data as ErrorResponse;
-      toasterError(errorResponse.message || 'Create Error!');
+      toast('Create False');
     }
   };
 
@@ -78,8 +74,10 @@ export const CreateBookButton = () => {
                   Add Book
                 </h3>
                 <BookForm
-                  bookPayload={defaultBookPayload}
-                  onSubmit={onSubmitCreateBook}
+                  name=""
+                  author=""
+                  topicId={undefined}
+                  onSubmit={onSubmit}
                   disableEdit={false}
                 />
               </div>

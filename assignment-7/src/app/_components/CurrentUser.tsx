@@ -4,7 +4,6 @@ import { useSessionContext } from '../_contexts/SessionContext';
 
 export const CurrentUser = () => {
   const { currentUser, signOut } = useSessionContext();
-
   if (!currentUser) {
     return (
       <Link

@@ -4,15 +4,14 @@ import Link from 'next/link';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
+import { useSessionContext } from 'app/_contexts/SessionContext';
 import { ErrorMessage } from '../../_components/common/ErrorMessage';
-import { SignUpSchemaType, SignUpSchema, ErrorResponse } from '../../_types';
-import { useAuthContext } from '../../_contexts/AuthContext';
-import { useApplicationContext } from '../../_contexts/ApplicationContext';
+import { SignUpSchemaType, SignUpSchema } from '../../_types';
 
 export default function RegisterPage() {
   const routes = useRouter();
-  const { toasterError, toasterSuccess } = useApplicationContext();
-  const { signUp } = useAuthContext();
+  const { signUp } = useSessionContext();
 
   const {
     register,
@@ -31,15 +30,14 @@ export default function RegisterPage() {
         fullName: data.fullName,
         password: data.password,
       });
-      if (response.success) {
-        toasterSuccess('sign up success');
+      if (response) {
+        toast(response.message);
         routes.push('/login');
       } else {
-        const errorResponse = response.data as ErrorResponse;
-        toasterError(errorResponse.message || 'sign up false');
+        toast('signUp false');
       }
     } catch (error) {
-      toasterError(error);
+      toast('signUp false');
     }
   };
 
@@ -96,7 +94,6 @@ export default function RegisterPage() {
                   id="avatar"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   readOnly={isSubmitting}
-                  required
                 />
               </label>
               <label

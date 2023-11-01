@@ -5,33 +5,36 @@
  * This is a swagger for API.
  * OpenAPI spec version: 1.0
  */
-import axios from 'axios';
-import type { AxiosRequestConfig, AxiosResponse } from 'axios';
 import type {
   LoginRequest,
   LoginResponse,
   MessageResponse,
   SignupRequest,
 } from '../model';
+import { requester } from '../mutator/requester';
 
 /**
  * Login to portal by email
  * @summary Login to portal
  */
-export const login = (
-  loginRequest: LoginRequest,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<LoginResponse>> => {
-  return axios.post(`/auth/login`, loginRequest, options);
+export const login = (loginRequest: LoginRequest) => {
+  return requester<LoginResponse>({
+    url: `/auth/login`,
+    method: 'post',
+    headers: { 'Content-Type': 'application/json' },
+    data: loginRequest,
+  });
 };
 
 /**
  * Signup
  * @summary Signup
  */
-export const signup = (
-  signupRequest: SignupRequest,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<MessageResponse>> => {
-  return axios.post(`/auth/signup`, signupRequest, options);
+export const signup = (signupRequest: SignupRequest) => {
+  return requester<MessageResponse>({
+    url: `/auth/signup`,
+    method: 'post',
+    headers: { 'Content-Type': 'application/json' },
+    data: signupRequest,
+  });
 };

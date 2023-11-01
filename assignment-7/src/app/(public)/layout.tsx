@@ -1,11 +1,16 @@
-import { ReactNode } from 'react';
-import { AuthProvider } from '../_contexts/AuthContext';
-import Layout from '../_components/Layout';
+'use client';
 
-export default function PrivateLayout({ children }: { children: ReactNode }) {
-  return (
-    <AuthProvider>
-      <Layout>{children}</Layout>
-    </AuthProvider>
-  );
+import { useRouter } from 'next/navigation';
+import { ReactNode, useEffect } from 'react';
+import { useSessionContext } from '../_contexts/SessionContext';
+
+export default function SecureLayout({ children }: { children: ReactNode }) {
+  const routers = useRouter();
+  const { isLogin } = useSessionContext();
+
+  useEffect(() => {
+    if (isLogin) routers.push('/books');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLogin]);
+  return children;
 }

@@ -3,32 +3,29 @@
 import { FC } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import useSWR from 'swr';
+import { useGetTopics } from 'api';
 import { ErrorMessage } from './common/ErrorMessage';
 import { BookSchema, BookSchemaType } from '../_types/schema/BookSchema';
-import { BookPayload, Topic } from '../_types';
-import { fetchWrapper } from '../_services/common/fetchWrapper';
 import Loading from '../loading';
 
 interface BookProps {
-  bookPayload: BookPayload;
-  onSubmit: (updatedBookPayload: BookPayload) => Promise<void>;
+  name?: string | '';
+  author?: string | '';
+  topicId: number | undefined;
+  onSubmit: (name: string, author: string, topicId: number) => Promise<void>;
   disableEdit?: boolean;
 }
 
 export const BookForm: FC<BookProps> = ({
-  bookPayload,
+  name,
+  author,
+  topicId,
   onSubmit,
   disableEdit,
 }) => {
-  const fetcher = (url: string) => fetchWrapper(url, 'GET');
-
-  const { data, isLoading } = useSWR(
-    'https://develop-api.bookstore.dwarvesf.com/api/v1/topics',
-    fetcher,
-  );
-
-  const validTopics = data?.success ? (data.data as Topic[]) : [];
+  const currentValues = { name, author, topicId };
+  const { data, isLoading } = useGetTopics();
+  const validTopics = data?.data || [];
 
   const {
     register,
@@ -36,19 +33,20 @@ export const BookForm: FC<BookProps> = ({
     formState: { errors },
   } = useForm<BookSchemaType>({
     resolver: zodResolver(BookSchema),
-    defaultValues: bookPayload,
+    defaultValues: currentValues,
   });
 
   if (isLoading) return <Loading text="Form" />;
 
   const triggerSubmit: SubmitHandler<BookSchemaType> = async (data) => {
     const updatedBook = {
-      ...bookPayload,
+      ...currentValues,
       name: data.name,
       author: data.author,
-      TopicID: data.TopicID,
+      topicId: data.topicId,
     };
-    await onSubmit(updatedBook);
+    const { name, author, topicId } = updatedBook;
+    await onSubmit(name, author, topicId);
   };
 
   const onSubmitForm = handleSubmit(triggerSubmit);
@@ -88,17 +86,17 @@ export const BookForm: FC<BookProps> = ({
             required
           />
         </label>
-        <label htmlFor="TopicID">
+        <label htmlFor="topicId">
           <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
             Topic:
           </p>
-          <ErrorMessage error={errors.TopicID} />
+          <ErrorMessage error={errors.topicId} />
           <select
-            id="TopicID"
-            {...register('TopicID', { valueAsNumber: true })}
+            id="topicId"
+            {...register('topicId', { valueAsNumber: true })}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-            name="TopicID"
-            defaultValue={`${bookPayload.TopicID}`}
+            name="topicId"
+            defaultValue={`${topicId}`}
             disabled={disableEdit}
           >
             <option value="0" hidden>

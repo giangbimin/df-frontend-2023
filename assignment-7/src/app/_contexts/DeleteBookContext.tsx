@@ -1,16 +1,15 @@
 'use client';
 
-import { createContext, useContext, useMemo, useState } from 'react';
+import { ReactNode, createContext, useContext, useMemo, useState } from 'react';
 
-import { Book } from '../_types/api/book.d';
-import { fetchWrapper } from '../_services/common/fetchWrapper';
+import { deleteBook, Book } from 'api';
 
 type DeleteBookContextProps = {
   currentBook: Book | undefined;
   isShowDeleteConfirm: boolean;
   showDeleteConfirm: (book: Book) => void;
   hideDeleteConfirm: () => void;
-  deleteBook: () => Promise<boolean>;
+  removeBook: () => Promise<void>;
 };
 
 const DeleteBookContext = createContext<DeleteBookContextProps>({
@@ -18,25 +17,20 @@ const DeleteBookContext = createContext<DeleteBookContextProps>({
   isShowDeleteConfirm: false,
   showDeleteConfirm: () => {},
   hideDeleteConfirm: () => {},
-  deleteBook: async () => false,
+  removeBook: async () => {},
 });
 
-export const DeleteBookProvider = ({ children }) => {
+export const DeleteBookProvider = ({ children }: { children: ReactNode }) => {
   const [isShowDeleteConfirm, setIsShowDeleteConfirm] =
     useState<boolean>(false);
   const [currentBook, setCurrentBook] = useState<Book | undefined>(undefined);
 
-  const deleteBook = async () => {
-    if (!currentBook) return false;
-
+  const removeBook = async () => {
+    if (!currentBook) return;
     try {
-      const response = await fetchWrapper(
-        `https://develop-api.bookstore.dwarvesf.com/api/v1/books/${currentBook.id}`,
-        'DELETE',
-      );
-      return response.success;
+      await deleteBook(currentBook.id);
     } catch (error) {
-      throw new Error(error);
+      throw new Error('Delete Error');
     }
   };
 
@@ -53,7 +47,7 @@ export const DeleteBookProvider = ({ children }) => {
   const useDeleteBookContext = useMemo<DeleteBookContextProps>(
     () => ({
       currentBook,
-      deleteBook,
+      removeBook,
       isShowDeleteConfirm,
       showDeleteConfirm,
       hideDeleteConfirm,

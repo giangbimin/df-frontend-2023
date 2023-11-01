@@ -2,10 +2,10 @@
 
 import { FC, useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ListBookPayload } from '../_types';
+import { GetBooksParams } from 'api';
 
 type BookSearchProps = {
-  searchCondition: ListBookPayload;
+  searchCondition: GetBooksParams;
 };
 
 export const BookSearch: FC<BookSearchProps> = ({ searchCondition }) => {
@@ -14,17 +14,21 @@ export const BookSearch: FC<BookSearchProps> = ({ searchCondition }) => {
   const [query, setQuery] = useState(searchCondition.query);
 
   const setStoredSearchQuery = () => {
-    if (typeof localStorage === 'undefined') return;
-    localStorage.setItem('query', query);
+    if (typeof window === 'undefined') return;
+    localStorage.setItem('query', query || '');
   };
 
   const handleSearch = useCallback(() => {
     const newParams = { ...searchCondition, query, page: 1 };
     const queryParams = Object.keys(newParams)
-      .map(
-        (key) =>
-          `${encodeURIComponent(key)}=${encodeURIComponent(newParams[key])}`,
-      )
+      .map((key) => {
+        const value = newParams[key as keyof typeof newParams];
+        if (value !== undefined) {
+          return `${encodeURIComponent(key)}=${encodeURIComponent(value)}`;
+        }
+        return '';
+      })
+      .filter((param) => param !== '')
       .join('&');
     router.replace(`/books?${queryParams}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps

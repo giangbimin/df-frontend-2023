@@ -1,27 +1,24 @@
 import { FC } from 'react';
+import toast from 'react-hot-toast';
 import { useDeleteBookContext } from '../_contexts/DeleteBookContext';
 import { Dialog } from './common/Dialog';
-import { useApplicationContext } from '../_contexts/ApplicationContext';
 
 interface DialogProps {
   triggerSubmit?: () => void;
 }
 
 export const ConfirmDeleteDialog: FC<DialogProps> = ({ triggerSubmit }) => {
-  const { toasterSuccess, toasterError } = useApplicationContext();
-  const { currentBook, isShowDeleteConfirm, deleteBook, hideDeleteConfirm } =
+  const { currentBook, isShowDeleteConfirm, removeBook, hideDeleteConfirm } =
     useDeleteBookContext();
-
   if (currentBook === undefined || isShowDeleteConfirm === false) return null;
-
   const submitDeleteBook = async () => {
-    const status = await deleteBook();
-    if (status) {
-      toasterSuccess('Delete Success!');
+    try {
+      await removeBook();
+      toast('Delete Success!');
       hideDeleteConfirm();
       if (triggerSubmit !== undefined) triggerSubmit();
-    } else {
-      toasterError('Delete false!');
+    } catch {
+      toast('Delete false!');
     }
   };
   return (

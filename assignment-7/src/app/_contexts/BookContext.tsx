@@ -2,51 +2,45 @@
 
 import {
   Dispatch,
+  ReactNode,
   SetStateAction,
   createContext,
   useContext,
   useMemo,
   useState,
 } from 'react';
-import { fetchWrapper } from '../_services/common/fetchWrapper';
-import {
-  Book,
-  BookPayload,
-  FetchResponse,
-  defaultFetchResponse,
-} from '../_types';
+import { Book, UpdateBookRequest, updateBook } from 'api';
 
 type BookContextProps = {
   currentBook: Book | undefined;
   setCurrentBook: Dispatch<SetStateAction<Book | undefined>>;
-  updateBook: (id: string, bookPayload: BookPayload) => Promise<FetchResponse>;
+  update: (
+    id: number,
+    updateBookRequest: UpdateBookRequest,
+  ) => Promise<Book | undefined>;
 };
 
 const BookContext = createContext<BookContextProps>({
   currentBook: undefined,
   setCurrentBook: () => {},
-  updateBook: async () => defaultFetchResponse,
+  update: async () => undefined,
 });
 
-export const BookProvider = ({ children }) => {
+export const BookProvider = ({ children }: { children: ReactNode }) => {
   const [currentBook, setCurrentBook] = useState<Book | undefined>(undefined);
 
-  const updateBook = async (id: string, bookPayload: BookPayload) => {
-    const response = await fetchWrapper(
-      `https://develop-api.bookstore.dwarvesf.com/api/v1/books/${id}`,
-      'PUT',
-      bookPayload,
-    );
-
-    if (response.success) setCurrentBook(response.data as Book);
-    return response;
+  const update = async (id: number, updateBookRequest: UpdateBookRequest) => {
+    const response = await updateBook(id, updateBookRequest);
+    const book = response.data;
+    if (response) setCurrentBook(book);
+    return book;
   };
 
   const useBookContext = useMemo<BookContextProps>(
     () => ({
       currentBook,
       setCurrentBook,
-      updateBook,
+      update,
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [currentBook],

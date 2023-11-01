@@ -5,8 +5,6 @@
  * This is a swagger for API.
  * OpenAPI spec version: 1.0
  */
-import axios from 'axios';
-import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
 import useSwr from 'swr';
 import type { Key, SWRConfiguration } from 'swr';
 import type {
@@ -17,38 +15,36 @@ import type {
   UpdateUserRequest,
   UserResponse,
 } from '../model';
+import { requester } from '../mutator/requester';
 
 /**
  * Retrieve my information
  * @summary Retrieve my information
  */
-export const getMe = (
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<MeResponse>> => {
-  return axios.get(`/me`, options);
+export const getMe = () => {
+  return requester<MeResponse>({ url: `/me`, method: 'get' });
 };
 
 export const getGetMeKey = () => [`/me`] as const;
 
 export type GetMeQueryResult = NonNullable<Awaited<ReturnType<typeof getMe>>>;
-export type GetMeQueryError = AxiosError<ErrorResponse>;
+export type GetMeQueryError = ErrorResponse;
 
 /**
  * @summary Retrieve my information
  */
-export const useGetMe = <TError = AxiosError<ErrorResponse>>(options?: {
+export const useGetMe = <TError = ErrorResponse>(options?: {
   swr?: SWRConfiguration<Awaited<ReturnType<typeof getMe>>, TError> & {
     swrKey?: Key;
     enabled?: boolean;
   };
-  axios?: AxiosRequestConfig;
 }) => {
-  const { swr: swrOptions, axios: axiosOptions } = options ?? {};
+  const { swr: swrOptions } = options ?? {};
 
   const isEnabled = swrOptions?.enabled !== false;
   const swrKey =
     swrOptions?.swrKey ?? (() => (isEnabled ? getGetMeKey() : null));
-  const swrFn = () => getMe(axiosOptions);
+  const swrFn = () => getMe();
 
   const query = useSwr<Awaited<ReturnType<typeof swrFn>>, TError>(
     swrKey,
@@ -66,11 +62,13 @@ export const useGetMe = <TError = AxiosError<ErrorResponse>>(options?: {
  * Update user
  * @summary Update user
  */
-export const updateUser = (
-  updateUserRequest: UpdateUserRequest,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<UserResponse>> => {
-  return axios.put(`/users`, updateUserRequest, options);
+export const updateUser = (updateUserRequest: UpdateUserRequest) => {
+  return requester<UserResponse>({
+    url: `/users`,
+    method: 'put',
+    headers: { 'Content-Type': 'application/json' },
+    data: updateUserRequest,
+  });
 };
 
 /**
@@ -79,7 +77,11 @@ export const updateUser = (
  */
 export const updatePassword = (
   updatePasswordRequest: UpdatePasswordRequest,
-  options?: AxiosRequestConfig,
-): Promise<AxiosResponse<MessageResponse>> => {
-  return axios.put(`/users/password`, updatePasswordRequest, options);
+) => {
+  return requester<MessageResponse>({
+    url: `/users/password`,
+    method: 'put',
+    headers: { 'Content-Type': 'application/json' },
+    data: updatePasswordRequest,
+  });
 };

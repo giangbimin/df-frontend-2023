@@ -14,7 +14,7 @@ const Pagination: FC<PaginationProps> = ({
   paginationArray,
   currentPage,
 }) => {
-  const pageNumber = (curPage) => {
+  const pageNumber = (curPage: number) => {
     if (paginationArray.length < 3) return `${curPage}`;
     if (curPage === 1 && curPage !== currentPage) return '<<';
     const lastPageIndex = paginationArray.length - 1;

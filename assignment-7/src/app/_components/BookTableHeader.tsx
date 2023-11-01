@@ -1,10 +1,10 @@
 import { FC } from 'react';
+import { GetBooksParams } from 'api';
 import { BookSearch } from './BookSearch';
-import { ListBookPayload } from '../_types';
 import { CreateBookButton } from './CreateBookButton';
 
 type BookSearchProps = {
-  searchCondition: ListBookPayload;
+  searchCondition: GetBooksParams;
 };
 
 const BookTableHeader: FC<BookSearchProps> = ({ searchCondition }) => {

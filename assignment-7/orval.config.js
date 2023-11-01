@@ -10,6 +10,12 @@ export default defineConfig({
       client: 'swr',
       mock: false,
       prettier: true,
+      override: {
+        mutator: {
+          path: './mutator/requester.ts',
+          name: 'requester',
+        },
+      },
     },
     input: {
       target: 'https://develop-api.bookstore.dwarvesf.com/swagger/doc.json',

@@ -2,34 +2,25 @@
 
 import { FC } from 'react';
 import { useRouter } from 'next/navigation';
-import useSWR from 'swr';
+import { useGetBook } from 'api';
 import { useBookContext } from '../../_contexts/BookContext';
 import { useDeleteBookContext } from '../../_contexts/DeleteBookContext';
 import CustomNotFound from '../../not-found';
 import { BtnBack } from '../common/BtnBack';
 import { ConfirmDeleteDialog } from '../ConfirmDeleteDialog';
-import { Book } from '../../_types';
-import { fetchWrapper } from '../../_services/common/fetchWrapper';
 import Loading from '../../loading';
 
 interface BookProps {
-  id: string;
+  id: number;
 }
 export const BookDetail: FC<BookProps> = ({ id }) => {
   const router = useRouter();
   const { currentBook, setCurrentBook } = useBookContext();
   const { showDeleteConfirm } = useDeleteBookContext();
-
-  const fetcher = (url: string) => fetchWrapper(url, 'GET');
-
-  const { data, isLoading } = useSWR(
-    `https://develop-api.bookstore.dwarvesf.com/api/v1/books/${id}`,
-    fetcher,
-  );
-
+  const { data, isLoading } = useGetBook(id);
   if (isLoading) return <Loading text="Book" />;
-  if (data?.success) setCurrentBook(data.data as Book);
-  if (currentBook === undefined) return <CustomNotFound />;
+  setCurrentBook(data?.data);
+  if (!currentBook) return <CustomNotFound />;
 
   const triggerSubmit = () => {
     router.replace('/');
@@ -48,7 +39,7 @@ export const BookDetail: FC<BookProps> = ({ id }) => {
           </p>
           <p>
             <strong>Topic:&#32;</strong>
-            {currentBook.topic.name}
+            {currentBook.topic?.id}
           </p>
         </div>
       </div>

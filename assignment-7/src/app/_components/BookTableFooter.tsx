@@ -1,7 +1,7 @@
 import { usePathname, useSearchParams } from 'next/navigation';
 import { FC, useCallback } from 'react';
+import { Metadata } from 'api';
 import Pagination from './common/Pagination';
-import { Metadata } from '../_types';
 
 type BookPagingProps = {
   metadata: Metadata;

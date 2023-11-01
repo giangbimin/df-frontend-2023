@@ -4,17 +4,14 @@ import Link from 'next/link';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
 import { LoginSchema, LoginSchemaType } from '../../_types';
-import { useAuthContext } from '../../_contexts/AuthContext';
 import { ErrorMessage } from '../../_components/common/ErrorMessage';
-import { useApplicationContext } from '../../_contexts/ApplicationContext';
-import { ErrorResponse } from '../../_types/api/request.d';
+import { useSessionContext } from '../../_contexts/SessionContext';
 
 export default function LoginPage() {
   const routers = useRouter();
-  const { toasterError, toasterSuccess } = useApplicationContext();
-
-  const { signIn } = useAuthContext();
+  const { signIn } = useSessionContext();
 
   const {
     register,
@@ -25,19 +22,11 @@ export default function LoginPage() {
   const onSubmit: SubmitHandler<LoginSchemaType> = async (data, e) => {
     if (e) e.preventDefault();
     try {
-      const response = await signIn({
-        email: data.email,
-        password: data.password,
-      });
-      if (response.success) {
-        toasterSuccess('sign in success');
-        routers.push('/books');
-      } else {
-        const errorResponse = response.data as ErrorResponse;
-        toasterError(errorResponse.message || 'An error occurred');
-      }
+      await signIn(data.email, data.password);
+      routers.push('/books');
+      toast('signIn success');
     } catch (error) {
-      toasterError(error || 'An error occurred');
+      toast('Email or Password invalid');
     }
   };
 
@@ -107,7 +96,7 @@ export default function LoginPage() {
                 {isSubmitting ? 'Loading' : 'Sign in'}
               </button>
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
-                Don’t have an account yet?
+                {`Don't have an account yet?`}
                 <Link
                   href="/register"
                   className="font-medium text-primary-600 hover:underline dark:text-primary-500"

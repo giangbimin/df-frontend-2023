@@ -2,41 +2,31 @@
 
 import { FC } from 'react';
 import Link from 'next/link';
-import useSWR from 'swr';
+import toast from 'react-hot-toast';
+import { useGetBook } from 'api';
 import { useBookContext } from '../../_contexts/BookContext';
 import CustomNotFound from '../../not-found';
 import { BtnBack } from '../common/BtnBack';
-import { useApplicationContext } from '../../_contexts/ApplicationContext';
 import { BookForm } from '../BookForm';
-import { fetchWrapper } from '../../_services/common/fetchWrapper';
-import { Book, BookPayload, ErrorResponse } from '../../_types';
 import Loading from '../../loading';
 
 interface BookProps {
-  id: string;
+  id: number;
 }
 export const BookEdit: FC<BookProps> = ({ id }) => {
-  const { toasterSuccess, toasterError } = useApplicationContext();
-  const { updateBook } = useBookContext();
+  const { update } = useBookContext();
 
-  const fetcher = (url: string) => fetchWrapper(url, 'GET');
-
-  const { data, isLoading } = useSWR(
-    `https://develop-api.bookstore.dwarvesf.com/api/v1/books/${id}`,
-    fetcher,
-  );
-
+  const { data, isLoading } = useGetBook(id);
   if (isLoading) return <Loading text="Book" />;
-  const currentBook = data?.success ? (data.data as Book) : undefined;
-  if (currentBook === undefined) return <CustomNotFound />;
+  if (!data || !data.data) return <CustomNotFound />;
+  const currentBook = data.data;
 
-  const onSubmit = async (updateBookPayload: BookPayload) => {
-    const response = await updateBook(id, updateBookPayload);
-    if (response.success) {
-      toasterSuccess('Update Success');
+  const onSubmit = async (name: string, author: string, topicId: number) => {
+    const response = await update(id, { name, author, topicId });
+    if (response) {
+      toast('Update Success');
     } else {
-      const errorResponse = response.data as ErrorResponse;
-      toasterError(errorResponse.message || 'Update False');
+      toast('Update False');
     }
   };
 
@@ -57,11 +47,9 @@ export const BookEdit: FC<BookProps> = ({ id }) => {
       </div>
       <div className="space-y-3 md:space-y-0 md:space-x-4 p-4">
         <BookForm
-          bookPayload={{
-            name: currentBook.name,
-            author: currentBook.author,
-            TopicID: currentBook.topic.id,
-          }}
+          name={currentBook.name}
+          author={currentBook.author}
+          topicId={currentBook.topic?.id}
           onSubmit={onSubmit}
           disableEdit={false}
         />
