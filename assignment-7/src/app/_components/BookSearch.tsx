@@ -3,12 +3,14 @@
 import { FC, useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GetBooksParams } from 'api';
+import { useSWRConfig } from 'swr';
 
 type BookSearchProps = {
   searchCondition: GetBooksParams;
 };
 
 export const BookSearch: FC<BookSearchProps> = ({ searchCondition }) => {
+  const { mutate } = useSWRConfig();
   const router = useRouter();
 
   const [query, setQuery] = useState(searchCondition.query);
@@ -30,6 +32,7 @@ export const BookSearch: FC<BookSearchProps> = ({ searchCondition }) => {
       })
       .filter((param) => param !== '')
       .join('&');
+    mutate((key) => typeof key === 'string' && key.startsWith('/books'));
     router.replace(`/books?${queryParams}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query]);
