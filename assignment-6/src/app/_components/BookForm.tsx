@@ -22,12 +22,7 @@ export const BookForm: FC<BookProps> = ({
   disableEdit,
 }) => {
   const fetcher = (url: string) => fetchWrapper(url, 'GET');
-
-  const { data, isLoading } = useSWR(
-    'https://develop-api.bookstore.dwarvesf.com/api/v1/topics',
-    fetcher,
-  );
-
+  const { data, isLoading } = useSWR('/topics', fetcher);
   const validTopics = data?.success ? (data.data as Topic[]) : [];
 
   const {

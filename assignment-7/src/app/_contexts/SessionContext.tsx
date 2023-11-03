@@ -95,10 +95,12 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     setIsLogin(checkLogin());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
 
   useEffect(() => {
     if (isLogin) findUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLogin]);
 
   const useSessionContext = useMemo<SessionContextValues>(

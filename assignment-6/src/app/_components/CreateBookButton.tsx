@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useSWRConfig } from 'swr';
 import { BookPayload, ErrorResponse, defaultBookPayload } from '../_types';
 import { BookForm } from './BookForm';
 import { fetchWrapper } from '../_services/common/fetchWrapper';
 import { useApplicationContext } from '../_contexts/ApplicationContext';
 
 export const CreateBookButton = () => {
+  const { mutate } = useSWRConfig();
   const { toasterError, toasterSuccess } = useApplicationContext();
   const [isShowCreateForm, setIsShowCreateForm] = useState<boolean>(false);
 
@@ -17,15 +19,11 @@ export const CreateBookButton = () => {
   };
 
   const onSubmitCreateBook = async (bookPayload: BookPayload) => {
-    const response = await fetchWrapper(
-      'https://develop-api.bookstore.dwarvesf.com/api/v1/books',
-      'POST',
-      bookPayload,
-    );
+    const response = await fetchWrapper('/books', 'POST', bookPayload);
     if (response.success) {
       toasterSuccess('Create Success');
       hideCreateForm();
-      window.location.reload();
+      mutate((key) => typeof key === 'string' && key.startsWith('/books'));
     } else {
       const errorResponse = response.data as ErrorResponse;
       toasterError(errorResponse.message || 'Create Error!');

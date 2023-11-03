@@ -25,6 +25,7 @@
     "strictPropertyInitialization": true,
     "useUnknownInCatchVariables": false,
     "noImplicitThis": true,
+    "baseUrl": "./src/",
     "plugins": [
       {
         "name": "next"
@@ -33,12 +34,17 @@
   },
   "include": [
     "next-env.d.ts",
-    ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx",
-    "**/*.d.ts",
-    "**/*.js",
-    "**/*.jsx"
+    "**.config.js",
+    "scripts/**/*.js",
+    "./jest.setup.js",
+    "./cypress/tests/*.ts",
+    ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "**/*.test.ts?x",
+    "**/*.cy.ts"
+  ]
 }

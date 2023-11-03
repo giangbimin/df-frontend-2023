@@ -32,11 +32,7 @@ export const BookProvider = ({ children }) => {
   const [currentBook, setCurrentBook] = useState<Book | undefined>(undefined);
 
   const updateBook = async (id: string, bookPayload: BookPayload) => {
-    const response = await fetchWrapper(
-      `https://develop-api.bookstore.dwarvesf.com/api/v1/books/${id}`,
-      'PUT',
-      bookPayload,
-    );
+    const response = await fetchWrapper(`/books/${id}`, 'PUT', bookPayload);
 
     if (response.success) setCurrentBook(response.data as Book);
     return response;

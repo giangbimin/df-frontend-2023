@@ -21,10 +21,7 @@ export const BookEdit: FC<BookProps> = ({ id }) => {
 
   const fetcher = (url: string) => fetchWrapper(url, 'GET');
 
-  const { data, isLoading } = useSWR(
-    `https://develop-api.bookstore.dwarvesf.com/api/v1/books/${id}`,
-    fetcher,
-  );
+  const { data, isLoading } = useSWR(`/books/${id}`, fetcher);
 
   if (isLoading) return <Loading text="Book" />;
   const currentBook = data?.success ? (data.data as Book) : undefined;

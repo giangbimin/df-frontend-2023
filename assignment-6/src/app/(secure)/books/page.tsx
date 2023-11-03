@@ -35,16 +35,9 @@ export default function BooksPage() {
     )
     .join('&');
 
-  const reqKey = `https://develop-api.bookstore.dwarvesf.com/api/v1/books?${queryParams}`;
-
+  const reqKey = `/books?${queryParams}`;
   const fetcher = (url: string) => fetchWrapper(url, 'GET');
-
-  const { data, isLoading } = useSWR(reqKey, fetcher, {
-    revalidateIfStale: true,
-    revalidateOnFocus: false,
-    revalidateOnReconnect: true,
-  });
-
+  const { data, isLoading } = useSWR(reqKey, fetcher);
   let books: Book[];
   let metadata: Metadata;
   if (data?.success) {

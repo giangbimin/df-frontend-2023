@@ -1,25 +1,14 @@
-import { clearCookie, getCookie } from '../utils/cookieUtils';
 import { FetchResponse, Metadata } from '../../_types/api/request.d';
+import LocalStorageManager from '../LocalStorageManager';
 
-// const { publicRuntimeConfig } = getConfig();
-// const { apiUrl } = publicRuntimeConfig;
-// console.log(apiUrl);
-const isApiUrl = (url: string) =>
-  url.startsWith('https://develop-api.bookstore.dwarvesf.com/api/v1');
+const API_URL = 'https://develop-api.bookstore.dwarvesf.com/api/v1';
 
-const authorizationBearer = () => {
-  return getCookie('bearerToken');
-};
+const localStorageManager = LocalStorageManager();
+const { getToken, cleanSession } = localStorageManager;
 
-const clearAuthorizationBearer = () => {
-  clearCookie('bearerToken');
-};
-
-const authHeader = async (url: string): Promise<HeadersInit> => {
-  const token = await authorizationBearer();
-  if (token !== '' && isApiUrl(url)) {
-    return { Authorization: `Bearer ${token}` };
-  }
+const authHeader = async (): Promise<HeadersInit> => {
+  const token = getToken() || '';
+  if (token !== '') return { Authorization: `Bearer ${token}` };
   return {};
 };
 
@@ -42,13 +31,13 @@ const requestOptions = (
 };
 
 const requestUrl = (url: string, method: string, body?: unknown) => {
-  if (method !== 'GET' || !body) return url;
+  if (method !== 'GET' || !body) return `${API_URL}${url}`;
   const queryParams = Object.keys(body)
     .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(body[key])}`)
     .join('&');
 
-  if (url.includes('?')) return `${url}&${queryParams}`;
-  return `${url}?${queryParams}`;
+  if (url.includes('?')) return `${API_URL}${url}&${queryParams}`;
+  return `${API_URL}${url}?${queryParams}`;
 };
 
 export async function fetchWrapper(
@@ -56,7 +45,7 @@ export async function fetchWrapper(
   method: string,
   body?: unknown,
 ): Promise<FetchResponse> {
-  const header = await authHeader(url);
+  const header = await authHeader();
   try {
     const response = await fetch(
       requestUrl(url, method, body),
@@ -64,7 +53,7 @@ export async function fetchWrapper(
     );
     const responseData = await response.json();
     if (!response.ok) {
-      if (response.status === 401) clearAuthorizationBearer();
+      if (response.status === 401) cleanSession();
       return {
         status: response.status,
         success: false,

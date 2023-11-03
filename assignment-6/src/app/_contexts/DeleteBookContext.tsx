@@ -30,10 +30,7 @@ export const DeleteBookProvider = ({ children }) => {
     if (!currentBook) return false;
 
     try {
-      const response = await fetchWrapper(
-        `https://develop-api.bookstore.dwarvesf.com/api/v1/books/${currentBook.id}`,
-        'DELETE',
-      );
+      const response = await fetchWrapper(`/books/${currentBook.id}`, 'DELETE');
       return response.success;
     } catch (error) {
       throw new Error(error);
